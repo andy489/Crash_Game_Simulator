@@ -1,0 +1,1742 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Crash Simulator</title>
+  <style>
+    /* ── Theme tokens ─────────────────────────────────────────────── */
+    :root {
+      --bg:          #0f1117;
+      --card-bg:     #1e2433;
+      --card-border: #2d3748;
+      --input-bg:    #0f1117;
+      --input-border:#374151;
+      --row-border:  #1a2035;
+      --stat-bg:     #0f1117;
+      --tip-bg:      #111827;
+      --tip-border:  #374151;
+      --tip-tip:     #374151;
+      --modal-bg:    #1e2433;
+      --err-bg:      #2d1515;
+      --err-border:  #f87171;
+      --err-text:    #fca5a5;
+      --text:        #e2e8f0;
+      --text-h1:     #f8fafc;
+      --text-sub:    #94a3b8;
+      --text-card-h: #cbd5e1;
+      --text-label:  #94a3b8;
+      --text-input:  #f1f5f9;
+      --text-stat-v: #f8fafc;
+      --text-stat-l: #64748b;
+      --text-th:     #94a3b8;
+      --text-pgroup: #6366f1;
+      --text-tipbox: #cbd5e1;
+      --accent:      #6366f1;
+      --accent2:     #8b5cf6;
+      --thread-id:   #818cf8;
+      --highlight:   #a78bfa;
+      --modal-close: #64748b;
+      --tip-icon-b:  #4f556a;
+      --tip-icon-c:  #64748b;
+      --badge-bg:    #14532d;
+      --badge-c:     #4ade80;
+      --modal-overlay: rgba(0,0,0,0.65);
+      --param-name:  #a5b4fc;
+      --param-rule:  #fbbf24;
+      --transition:  background 0.25s, color 0.2s, border-color 0.2s;
+    }
+
+    [data-theme="light"] {
+      --bg:          #f0f2f7;
+      --card-bg:     #ffffff;
+      --card-border: #d1d9e6;
+      --input-bg:    #f8f9fc;
+      --input-border:#c9d0de;
+      --row-border:  #e8ecf4;
+      --stat-bg:     #f4f6fb;
+      --tip-bg:      #ffffff;
+      --tip-border:  #d1d9e6;
+      --tip-tip:     #d1d9e6;
+      --modal-bg:    #ffffff;
+      --err-bg:      #fff0f0;
+      --err-border:  #f87171;
+      --err-text:    #c0392b;
+      --text:        #1e2433;
+      --text-h1:     #0f1117;
+      --text-sub:    #5a6680;
+      --text-card-h: #374151;
+      --text-label:  #5a6680;
+      --text-input:  #1e2433;
+      --text-stat-v: #0f1117;
+      --text-stat-l: #7a879c;
+      --text-th:     #5a6680;
+      --text-pgroup: #5356d4;
+      --text-tipbox: #374151;
+      --accent:      #5356d4;
+      --accent2:     #7c3aed;
+      --thread-id:   #5356d4;
+      --highlight:   #7c3aed;
+      --modal-close: #7a879c;
+      --tip-icon-b:  #b0bac9;
+      --tip-icon-c:  #7a879c;
+      --badge-bg:    #dcfce7;
+      --badge-c:     #16a34a;
+      --modal-overlay: rgba(0,0,0,0.4);
+      --param-name:  #5356d4;
+      --param-rule:  #b45309;
+    }
+    /* ───────────────────────────────────────────────────────────────── */
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      padding: 2rem;
+      transition: var(--transition);
+    }
+
+    /* ── Header row ──────────────────────────────────────────────── */
+    .page-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      margin-bottom: 2rem;
+    }
+
+    .page-header-left { display: flex; flex-direction: column; }
+
+    h1 {
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: var(--text-h1);
+    }
+
+    .subtitle {
+      color: var(--text-sub);
+      font-size: 0.9rem;
+      margin-top: 0.25rem;
+    }
+
+    /* ── Header controls row ─────────────────────────────────────── */
+    .header-controls {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      flex-shrink: 0;
+    }
+
+    /* ── Lang dropdown ───────────────────────────────────────────── */
+    .lang-dropdown {
+      position: relative;
+      flex-shrink: 0;
+    }
+
+    .btn-lang {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      padding: 0.4rem 0.75rem;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 20px;
+      color: var(--text-sub);
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      cursor: pointer;
+      transition: var(--transition), box-shadow 0.15s;
+      white-space: nowrap;
+    }
+    .btn-lang:hover,
+    .lang-dropdown.open .btn-lang {
+      border-color: var(--accent);
+      color: var(--accent);
+      box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent) 20%, transparent);
+    }
+    .btn-lang .chevron {
+      display: inline-flex;
+      align-items: center;
+      transition: transform 0.2s;
+    }
+    .btn-lang .chevron svg {
+      width: 10px; height: 10px;
+      stroke: currentColor; fill: none;
+      stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round;
+    }
+    .lang-dropdown.open .btn-lang .chevron { transform: rotate(180deg); }
+
+    .lang-menu {
+      display: none;
+      position: absolute;
+      top: calc(100% + 6px);
+      right: 0;
+      min-width: 90px;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 10px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+      overflow: hidden;
+      z-index: 200;
+    }
+    .lang-dropdown.open .lang-menu { display: block; }
+
+    .lang-option {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.5rem 0.85rem;
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--text-sub);
+      cursor: pointer;
+      transition: background 0.12s, color 0.12s;
+      gap: 0.5rem;
+      letter-spacing: 0.03em;
+      border: none;
+      background: none;
+      width: 100%;
+      text-align: left;
+    }
+    .lang-option:hover { background: color-mix(in srgb, var(--accent) 10%, transparent); color: var(--accent); }
+    .lang-option.active { color: var(--accent); }
+    .lang-option .check {
+      display: none;
+      width: 12px; height: 12px;
+      stroke: currentColor; fill: none;
+      stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round;
+    }
+    .lang-option.active .check { display: inline-block; }
+
+    /* ── Theme toggle ────────────────────────────────────────────── */
+    .btn-theme {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.4rem 0.85rem;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 20px;
+      color: var(--text-sub);
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--transition), box-shadow 0.15s;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .btn-theme:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+      box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent) 20%, transparent);
+    }
+    .btn-theme .theme-icon { display: inline-flex; align-items: center; line-height: 1; }
+    .btn-theme .theme-icon svg { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 1.75; stroke-linecap: round; }
+
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+      transition: var(--transition);
+    }
+
+    .card h2 {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--text-card-h);
+      margin-bottom: 1rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 1rem;
+    }
+
+    .grid-4 { grid-template-columns: repeat(4, 1fr); }
+    .grid-5 { grid-template-columns: repeat(5, 1fr); }
+
+    .param-group {
+      margin-bottom: 1.25rem;
+    }
+
+    .param-group-label {
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-pgroup);
+      margin-bottom: 0.6rem;
+      padding-bottom: 0.4rem;
+      border-bottom: 1px solid var(--card-border);
+    }
+
+    .field label {
+      font-size: 0.75rem;
+      color: var(--text-label);
+      margin-bottom: 0.3rem;
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+
+    .field input {
+      width: 100%;
+      padding: 0.5rem 0.75rem;
+      background: var(--input-bg);
+      border: 1px solid var(--input-border);
+      border-radius: 8px;
+      color: var(--text-input);
+      font-size: 0.9rem;
+      transition: var(--transition);
+    }
+
+    .field input:focus {
+      outline: none;
+      border-color: var(--accent);
+    }
+
+    /* hide number input spinners */
+    .field input[type=number]::-webkit-outer-spin-button,
+    .field input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+    .field input[type=number] { -moz-appearance: textfield; }
+
+    .btn-run {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.65rem 1.75rem;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      color: white;
+      font-size: 0.95rem;
+      font-weight: 600;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: opacity 0.2s, transform 0.1s;
+    }
+
+    .btn-run:hover { opacity: 0.9; }
+    .btn-run:active { transform: scale(0.98); }
+    .btn-run:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    .spinner {
+      display: none;
+      width: 16px; height: 16px;
+      border: 2px solid rgba(255,255,255,0.3);
+      border-top-color: white;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+    }
+
+    th {
+      text-align: left;
+      padding: 0.5rem 0.75rem;
+      color: var(--text-th);
+      font-weight: 600;
+      border-bottom: 1px solid var(--card-border);
+      font-size: 0.75rem;
+      text-transform: uppercase;
+    }
+
+    td {
+      padding: 0.55rem 0.75rem;
+      border-bottom: 1px solid var(--row-border);
+      font-variant-numeric: tabular-nums;
+    }
+
+    tr:last-child td { border-bottom: none; }
+
+    .thread-row td:first-child { color: var(--thread-id); font-weight: 600; }
+
+    .stat-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 1rem;
+    }
+
+    .stat-box {
+      background: var(--stat-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 8px;
+      padding: 0.9rem 1rem;
+      transition: var(--transition);
+    }
+
+    .stat-box .label {
+      font-size: 0.72rem;
+      color: var(--text-stat-l);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-bottom: 0.3rem;
+    }
+
+    .stat-box .value {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--text-stat-v);
+    }
+
+    .stat-box .value.highlight { color: var(--highlight); }
+
+    #section-results { display: none; }
+    #section-progress { display: none; }
+
+    .field input.invalid { border-color: #f87171; }
+
+    .error-box {
+      background: var(--err-bg);
+      border: 1px solid var(--err-border);
+      border-radius: 8px;
+      padding: 0.75rem 1rem;
+      margin-bottom: 1rem;
+      display: none;
+    }
+
+    .error-box ul {
+      margin: 0; padding-left: 1.2rem;
+      color: var(--err-text);
+      font-size: 0.85rem;
+      line-height: 1.7;
+    }
+
+    .badge-done {
+      display: inline-block;
+      background: var(--badge-bg);
+      color: var(--badge-c);
+      font-size: 0.7rem;
+      padding: 0.15rem 0.5rem;
+      border-radius: 999px;
+      margin-left: 0.5rem;
+      font-weight: 600;
+    }
+
+    /* Info button */
+    .btn-info {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 22px; height: 22px;
+      border-radius: 50%;
+      border: 1.5px solid var(--accent);
+      background: transparent;
+      color: var(--accent);
+      font-size: 0.75rem;
+      font-weight: 700;
+      cursor: pointer;
+      margin-left: 0.5rem;
+      vertical-align: middle;
+      transition: background 0.15s, color 0.15s;
+      flex-shrink: 0;
+    }
+    .btn-info:hover { background: var(--accent); color: #fff; }
+
+    /* Modal overlay */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: var(--modal-overlay);
+      z-index: 100;
+      align-items: center;
+      justify-content: center;
+    }
+    .modal-overlay.open { display: flex; }
+
+    .modal {
+      background: var(--modal-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 14px;
+      width: min(780px, 95vw);
+      max-height: 85vh;
+      overflow-y: auto;
+      padding: 1.75rem 2rem;
+      position: relative;
+      transition: var(--transition);
+    }
+
+    .modal h3 {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--text-h1);
+      margin-bottom: 1.25rem;
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 1rem; right: 1.25rem;
+      background: none;
+      border: none;
+      color: var(--modal-close);
+      font-size: 1.4rem;
+      cursor: pointer;
+      line-height: 1;
+    }
+    .modal-close:hover { color: var(--text-h1); }
+
+    .modal-section {
+      margin-bottom: 1.5rem;
+    }
+
+    .modal-section-title {
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--accent);
+      margin-bottom: 0.6rem;
+      padding-bottom: 0.4rem;
+      border-bottom: 1px solid var(--card-border);
+    }
+
+    .param-table { width: 100%; border-collapse: collapse; font-size: 0.83rem; }
+    .param-table th {
+      text-align: left;
+      padding: 0.4rem 0.6rem;
+      color: var(--text-stat-l);
+      font-weight: 600;
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      border-bottom: 1px solid var(--card-border);
+    }
+    .param-table td {
+      padding: 0.5rem 0.6rem;
+      border-bottom: 1px solid var(--row-border);
+      vertical-align: top;
+      line-height: 1.5;
+    }
+    .param-table tr:last-child td { border-bottom: none; }
+    .param-table td:first-child { color: var(--param-name); font-weight: 600; white-space: nowrap; }
+    .param-table td:nth-child(3) { color: var(--param-rule); font-size: 0.8rem; }
+
+    /* Field-level tooltip */
+    .tip-wrap {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+    }
+
+    .tip-icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 14px; height: 14px;
+      border-radius: 50%;
+      border: 1px solid var(--tip-icon-b);
+      background: transparent;
+      color: var(--tip-icon-c);
+      font-size: 0.6rem;
+      font-weight: 700;
+      font-style: normal;
+      cursor: default;
+      flex-shrink: 0;
+      line-height: 1;
+      transition: border-color 0.15s, color 0.15s;
+    }
+    .tip-wrap:hover .tip-icon,
+    .tip-wrap:focus-within .tip-icon { border-color: var(--thread-id); color: var(--thread-id); }
+
+    .tip-box {
+      display: none;
+      position: absolute;
+      bottom: calc(100% + 6px);
+      left: 50%;
+      transform: translateX(-50%);
+      width: 220px;
+      background: var(--tip-bg);
+      border: 1px solid var(--tip-border);
+      border-radius: 8px;
+      padding: 0.6rem 0.75rem;
+      font-size: 0.76rem;
+      color: var(--text-tipbox);
+      line-height: 1.5;
+      z-index: 50;
+      pointer-events: none;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.25);
+    }
+    .tip-box::after {
+      content: '';
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      border: 5px solid transparent;
+      border-top-color: var(--tip-tip);
+    }
+    .tip-box .tip-rule {
+      margin-top: 0.4rem;
+      padding-top: 0.4rem;
+      border-top: 1px solid var(--card-border);
+      color: var(--param-rule);
+      font-size: 0.72rem;
+    }
+    .tip-wrap:hover .tip-box,
+    .tip-wrap:focus-within .tip-box { display: block; }
+
+    /* ── Reservoir sampling explainer ───────────────────────────── */
+    .algo-card {
+      background: var(--input-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 10px;
+      padding: 1rem 1.25rem;
+      margin-bottom: 0.85rem;
+    }
+
+    .algo-title {
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      color: var(--accent);
+      margin-bottom: 0.75rem;
+    }
+
+    .algo-steps { display: flex; flex-direction: column; gap: 0.55rem; }
+
+    .algo-step {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.65rem;
+      font-size: 0.83rem;
+      color: var(--text);
+      line-height: 1.5;
+    }
+
+    .algo-num {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 20px; height: 20px;
+      border-radius: 50%;
+      background: color-mix(in srgb, var(--accent) 18%, transparent);
+      color: var(--accent);
+      font-size: 0.72rem;
+      font-weight: 700;
+      flex-shrink: 0;
+      margin-top: 0.1rem;
+    }
+
+    .algo-step code {
+      background: color-mix(in srgb, var(--accent) 12%, transparent);
+      color: var(--param-name);
+      border-radius: 4px;
+      padding: 0.05rem 0.35rem;
+      font-size: 0.8rem;
+    }
+
+    .algo-insight {
+      font-size: 0.81rem;
+      color: var(--text-sub);
+      line-height: 1.65;
+      padding: 0.8rem 1rem;
+      border-left: 3px solid var(--accent);
+      background: color-mix(in srgb, var(--accent) 6%, transparent);
+      border-radius: 0 8px 8px 0;
+    }
+
+    .algo-insight strong { color: var(--text); }
+    .algo-insight code {
+      background: color-mix(in srgb, var(--accent) 12%, transparent);
+      color: var(--param-name);
+      border-radius: 4px;
+      padding: 0.05rem 0.35rem;
+      font-size: 0.79rem;
+    }
+  </style>
+</head>
+<body>
+
+<div class="page-header">
+  <div class="page-header-left">
+    <h1 data-i18n="title">Crash Simulator</h1>
+    <p class="subtitle" data-i18n="subtitle">Multithreaded crash-game distribution simulator</p>
+  </div>
+  <div class="header-controls">
+    <div class="lang-dropdown" id="langDropdown">
+      <button class="btn-lang" id="btnLang" type="button" aria-label="Switch language" aria-haspopup="listbox">
+        <span id="langLabel">EN</span>
+        <span class="chevron"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><polyline points="6 9 12 15 18 9"/></svg></span>
+      </button>
+      <div class="lang-menu" role="listbox">
+        <button class="lang-option active" data-lang="EN" role="option">
+          English
+          <svg class="check" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><polyline points="20 6 9 17 4 12"/></svg>
+        </button>
+        <button class="lang-option" data-lang="BG" role="option">
+          Български
+          <svg class="check" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><polyline points="20 6 9 17 4 12"/></svg>
+        </button>
+        <button class="lang-option" data-lang="RU" role="option">
+          Русский
+          <svg class="check" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><polyline points="20 6 9 17 4 12"/></svg>
+        </button>
+        <button class="lang-option" data-lang="ZH" role="option">
+          中文
+          <svg class="check" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><polyline points="20 6 9 17 4 12"/></svg>
+        </button>
+      </div>
+    </div>
+    <button class="btn-theme" id="btnTheme" type="button" aria-label="Toggle theme">
+      <span class="theme-icon" id="themeIcon"></span>
+      <span id="themeLabel" data-i18n="themeLabelDark">Light</span>
+    </button>
+  </div>
+</div>
+
+<!-- Config Form -->
+<div class="card">
+  <h2><span data-i18n="configTitle">Configuration</span> <button class="btn-info" id="btnInfo" type="button" title="Parameter reference">i</button></h2>
+  <form id="configForm">
+
+    <!-- Group 1: Simulation -->
+    <div class="param-group">
+      <div class="param-group-label" data-i18n="groupSimulation">Simulation</div>
+      <div class="grid grid-4">
+        <div class="field">
+          <label><span data-i18n="labelSpins">Spins</span> <span class="tip-wrap"><i class="tip-icon">i</i><span class="tip-box"><span data-i18n="tipSpins">Total number of individual bets simulated across all threads. Higher values = more stable RTP results.</span><div class="tip-rule" data-i18n="ruleSpins">1 – 1,000,000,000</div></span></span></label>
+          <input type="text" id="spinsDisplay" name="spins" th:value="${config.spins}" required autocomplete="off"/>
+        </div>
+        <div class="field">
+          <label><span data-i18n="labelThreadCount">Thread Count</span> <span class="tip-wrap"><i class="tip-icon">i</i><span class="tip-box"><span data-i18n="tipThreadCount">Number of parallel worker threads. Spins are divided evenly (max ±1 difference). More threads = faster on multi-core CPUs.</span><div class="tip-rule" data-i18n="ruleThreadCount">1 – 8</div></span></span></label>
+          <input type="number" id="f-threadCount" name="threadCount" th:value="${config.threadCount}" min="1" required/>
+        </div>
+        <div class="field">
+          <label><span data-i18n="labelStake">Stake</span> <span class="tip-wrap"><i class="tip-icon">i</i><span class="tip-box"><span data-i18n="tipStake">Fixed amount wagered per spin. Total staked = Stake × Spins. Payout = Stake × multiplier.</span><div class="tip-rule" data-i18n="ruleStake">0.1 – 200.0, multiple of 0.1</div></span></span></label>
+          <input type="number" step="0.1" id="f-stake" name="stake" th:value="${config.stake}" required/>
+        </div>
+        <div class="field">
+          <label><span data-i18n="labelZeroSpin">Zero Spin Interval</span> <span class="tip-wrap"><i class="tip-icon">i</i><span class="tip-box"><span data-i18n="tipZeroSpin">Every Nth spin is forced to pay 0×. E.g. 36 = 1 in 36 spins always pays nothing. Set 0 to disable.</span><div class="tip-rule" data-i18n="ruleZeroSpin">≥ 0 (0 = disabled)</div></span></span></label>
+          <input type="number" id="f-zeroSpinInterval" name="zeroSpinInterval" th:value="${config.zeroSpinInterval}" required/>
+        </div>
+      </div>
+    </div>
+
+    <!-- Group 2: Multiplier Range -->
+    <div class="param-group">
+      <div class="param-group-label" data-i18n="groupMultiplierRange">Multiplier Range</div>
+      <div class="grid grid-5">
+        <div class="field">
+          <label><span data-i18n="labelMultMin">Min</span> <span class="tip-wrap"><i class="tip-icon">i</i><span class="tip-box"><span data-i18n="tipMultMin">Lowest possible multiplier for any non-zero spin. Acts as the floor of the distribution.</span><div class="tip-rule" data-i18n="ruleMultMin">&gt; 0, multiple of 0.1, &lt; Mid 1</div></span></span></label>
+          <input type="number" step="0.1" id="f-multiplierMin" name="multiplierMin" th:value="${config.multiplierMin}" required/>
+        </div>
+        <div class="field">
+          <label><span data-i18n="labelMultMid1">Mid 1 (seg 1→2)</span> <span class="tip-wrap"><i class="tip-icon">i</i><span class="tip-box"><span data-i18n="tipMultMid1">Boundary between segment 1 and 2. Multipliers up to this value use Crash Exponent Low; above it uses Crash Exponent Mid.</span><div class="tip-rule" data-i18n="ruleMultMid1">Multiple of 0.1, Min &lt; Mid1 &lt; Mid2</div></span></span></label>
+          <input type="number" step="0.1" id="f-multiplierMid1" name="multiplierMid1" th:value="${config.multiplierMid1}" required/>
+        </div>
+        <div class="field">
+          <label><span data-i18n="labelMultMid2">Mid 2 (seg 2→3)</span> <span class="tip-wrap"><i class="tip-icon">i</i><span class="tip-box"><span data-i18n="tipMultMid2">Boundary between segment 2 and 3. The distribution transitions from mid steepness to upper-mid steepness here.</span><div class="tip-rule" data-i18n="ruleMultMid2">Multiple of 0.1, Mid1 &lt; Mid2 &lt; Mid3</div></span></span></label>
+          <input type="number" step="0.1" id="f-multiplierMid2" name="multiplierMid2" th:value="${config.multiplierMid2}" required/>
+        </div>
+        <div class="field">
+          <label><span data-i18n="labelMultMid3">Mid 3 (seg 3→4)</span> <span class="tip-wrap"><i class="tip-icon">i</i><span class="tip-box"><span data-i18n="tipMultMid3">Boundary between segment 3 and the high-value tail. Marks where the rare big wins begin.</span><div class="tip-rule" data-i18n="ruleMultMid3">Multiple of 0.1, Mid2 &lt; Mid3 &lt; Max</div></span></span></label>
+          <input type="number" step="0.1" id="f-multiplierMid3" name="multiplierMid3" th:value="${config.multiplierMid3}" required/>
+        </div>
+        <div class="field">
+          <label><span data-i18n="labelMultMax">Max</span> <span class="tip-wrap"><i class="tip-icon">i</i><span class="tip-box"><span data-i18n="tipMultMax">Absolute maximum multiplier any spin can produce. The distribution is hard-capped here.</span><div class="tip-rule" data-i18n="ruleMultMax">Multiple of 0.1, &gt; Mid3</div></span></span></label>
+          <input type="number" step="0.1" id="f-multiplierMax" name="multiplierMax" th:value="${config.multiplierMax}" required/>
+        </div>
+      </div>
+    </div>
+
+    <!-- Group 3: Crash Exponents -->
+    <div class="param-group">
+      <div class="param-group-label" data-i18n="groupCrashExponents">Crash Exponents (steepness per segment)</div>
+      <div class="grid grid-4">
+        <div class="field">
+          <label><span data-i18n="labelExpLow">Low [min → mid 1]</span> <span class="tip-wrap"><i class="tip-icon">i</i><span class="tip-box"><span data-i18n="tipExpLow">Controls steepness of the power-law in the lowest segment. Exponent 1.0 = pure Pareto; higher values make values above Min rarer.</span><div class="tip-rule" data-i18n="ruleExpGt0">&gt; 0</div></span></span></label>
+          <input type="number" step="0.01" id="f-crashExponentLow" name="crashExponentLow" th:value="${config.crashExponentLow}" required/>
+        </div>
+        <div class="field">
+          <label><span data-i18n="labelExpMid">Mid [mid 1 → mid 2]</span> <span class="tip-wrap"><i class="tip-icon">i</i><span class="tip-box"><span data-i18n="tipExpMid">Steepness in the medium-value segment. Higher values reduce the probability of multipliers above Mid 1.</span><div class="tip-rule" data-i18n="ruleExpGt0">&gt; 0</div></span></span></label>
+          <input type="number" step="0.01" id="f-crashExponentMid" name="crashExponentMid" th:value="${config.crashExponentMid}" required/>
+        </div>
+        <div class="field">
+          <label><span data-i18n="labelExpUpperMid">Upper Mid [mid 2 → mid 3]</span> <span class="tip-wrap"><i class="tip-icon">i</i><span class="tip-box"><span data-i18n="tipExpUpperMid">Controls probability of reaching the high-value zone. Typically much larger than low/mid to make big wins rare.</span><div class="tip-rule" data-i18n="ruleExpGt0">&gt; 0</div></span></span></label>
+          <input type="number" step="0.01" id="f-crashExponentUpperMid" name="crashExponentUpperMid" th:value="${config.crashExponentUpperMid}" required/>
+        </div>
+        <div class="field">
+          <label><span data-i18n="labelExpHigh">High [mid 3 → max]</span> <span class="tip-wrap"><i class="tip-icon">i</i><span class="tip-box"><span data-i18n="tipExpHigh">Governs the extreme tail — the rarest, highest-paying outcomes. Usually the largest exponent in the config.</span><div class="tip-rule" data-i18n="ruleExpGt0">&gt; 0</div></span></span></label>
+          <input type="number" step="0.01" id="f-crashExponentHigh" name="crashExponentHigh" th:value="${config.crashExponentHigh}" required/>
+        </div>
+      </div>
+    </div>
+
+    <div id="errorBox" class="error-box"><ul id="errorList"></ul></div>
+    <div>
+      <button type="submit" class="btn-run" id="runBtn">
+        <div class="spinner" id="spinner"></div>
+        <span id="btnLabel" data-i18n="btnRun">Run Simulation</span>
+      </button>
+    </div>
+  </form>
+</div>
+
+<!-- Per-thread progress -->
+<div class="card" id="section-progress">
+  <h2><span data-i18n="progressTitle">Thread Progress</span> <span id="threadCountLabel"></span></h2>
+  <table>
+    <thead>
+      <tr>
+        <th data-i18n="colThread">Thread</th>
+        <th data-i18n="colSpins">Spins</th>
+        <th data-i18n="colHitRate">Hit Rate</th>
+        <th data-i18n="colWinRate">Win Rate</th>
+        <th data-i18n="colMaxMult">Max Mult</th>
+        <th data-i18n="colAvgMult">Avg Mult</th>
+        <th data-i18n="colMedianMult">Median Mult</th>
+        <th data-i18n="colTotalStaked">Total Staked</th>
+        <th data-i18n="colTotalReturned">Total Returned</th>
+        <th data-i18n="colRTP">RTP</th>
+      </tr>
+    </thead>
+    <tbody id="threadTableBody"></tbody>
+  </table>
+</div>
+
+<!-- Global results -->
+<div class="card" id="section-results">
+  <h2 data-i18n="resultsTitle">Global Results</h2>
+  <div class="stat-grid">
+    <div class="stat-box"><div class="label" data-i18n="statTotalSpins">Total Spins</div><div class="value" id="r-spins">—</div></div>
+    <div class="stat-box"><div class="label" data-i18n="statHitRate">Hit Rate</div><div class="value" id="r-hitRate">—</div></div>
+    <div class="stat-box"><div class="label" data-i18n="statWinRate">Win Rate</div><div class="value" id="r-winRate">—</div></div>
+    <div class="stat-box"><div class="label" data-i18n="statMaxMult">Max Multiplier</div><div class="value highlight" id="r-maxMult">—</div></div>
+    <div class="stat-box"><div class="label" data-i18n="statAvgMult">Avg Multiplier</div><div class="value" id="r-avgMult">—</div></div>
+    <div class="stat-box"><div class="label" data-i18n="statMedianMult">Median Multiplier</div><div class="value" id="r-medianMult">—</div></div>
+    <div class="stat-box"><div class="label" data-i18n="statTotalStaked">Total Staked</div><div class="value" id="r-staked">—</div></div>
+    <div class="stat-box"><div class="label" data-i18n="statTotalReturned">Total Returned</div><div class="value" id="r-returned">—</div></div>
+    <div class="stat-box"><div class="label" data-i18n="statRTP">RTP</div><div class="value highlight" id="r-rtp">—</div></div>
+    <div class="stat-box"><div class="label" data-i18n="statElapsed">Elapsed Time</div><div class="value" id="r-elapsed">—</div></div>
+  </div>
+</div>
+
+<!-- Parameter reference modal -->
+<div class="modal-overlay" id="infoModal">
+  <div class="modal">
+    <button class="modal-close" id="modalClose">&times;</button>
+    <h3 data-i18n="modalTitle">Parameter Reference</h3>
+
+    <div class="modal-section">
+      <div class="modal-section-title" data-i18n="groupSimulation">Simulation</div>
+      <table class="param-table">
+        <thead><tr><th data-i18n="modalColParam">Parameter</th><th data-i18n="modalColDesc">Description</th><th data-i18n="modalColValidation">Validation</th></tr></thead>
+        <tbody>
+          <tr>
+            <td data-i18n="labelSpins">Spins</td>
+            <td data-i18n="modalDescSpins">Total number of individual bets to simulate across all threads. Higher values produce more statistically stable RTP results.</td>
+            <td data-i18n="ruleSpins">1 – 1,000,000,000</td>
+          </tr>
+          <tr>
+            <td data-i18n="labelThreadCount">Thread Count</td>
+            <td data-i18n="modalDescThreadCount">Number of parallel worker threads. Spins are divided evenly across threads (max difference of 1 spin between any two threads). More threads = faster on multi-core machines.</td>
+            <td data-i18n="ruleThreadCount">1 – 8</td>
+          </tr>
+          <tr>
+            <td data-i18n="labelStake">Stake</td>
+            <td data-i18n="modalDescStake">The fixed amount wagered per spin. Total staked = Stake × Spins. Payout per spin = Stake × multiplier.</td>
+            <td data-i18n="ruleStake">0.1 – 200.0, must be a multiple of 0.1</td>
+          </tr>
+          <tr>
+            <td data-i18n="labelZeroSpin">Zero Spin Interval</td>
+            <td data-i18n="modalDescZeroSpin">Every Nth spin is forced to return a 0× multiplier (a dead spin). For example, interval=36 means 1 in 36 spins always pays nothing. Set to 0 to disable.</td>
+            <td data-i18n="ruleZeroSpin">≥ 0 (0 = disabled)</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="modal-section">
+      <div class="modal-section-title" data-i18n="groupMultiplierRange">Multiplier Range</div>
+      <table class="param-table">
+        <thead><tr><th data-i18n="modalColParam">Parameter</th><th data-i18n="modalColDesc">Description</th><th data-i18n="modalColValidation">Validation</th></tr></thead>
+        <tbody>
+          <tr>
+            <td data-i18n="labelMultMin">Min</td>
+            <td data-i18n="modalDescMultMin">The lowest possible multiplier that a non-zero spin can produce. Acts as the floor of the distribution. Example: 0.1 means the worst live outcome pays back 10% of stake.</td>
+            <td data-i18n="ruleMultMin">&gt; 0, multiple of 0.1, &lt; Mid 1</td>
+          </tr>
+          <tr>
+            <td>Mid 1</td>
+            <td data-i18n="modalDescMultMid1">Boundary between segment 1 and segment 2. Multipliers up to this value are governed by Crash Exponent Low. Beyond it, Crash Exponent Mid takes over.</td>
+            <td data-i18n="ruleMultMid1">Multiple of 0.1, Min &lt; Mid1 &lt; Mid2</td>
+          </tr>
+          <tr>
+            <td>Mid 2</td>
+            <td data-i18n="modalDescMultMid2">Boundary between segment 2 and segment 3. Marks where the distribution transitions from the mid steepness to the upper-mid steepness.</td>
+            <td data-i18n="ruleMultMid2">Multiple of 0.1, Mid1 &lt; Mid2 &lt; Mid3</td>
+          </tr>
+          <tr>
+            <td>Mid 3</td>
+            <td data-i18n="modalDescMultMid3">Boundary between segment 3 and segment 4 (the high-value tail). Marks where the rare big wins begin.</td>
+            <td data-i18n="ruleMultMid3">Multiple of 0.1, Mid2 &lt; Mid3 &lt; Max</td>
+          </tr>
+          <tr>
+            <td data-i18n="labelMultMax">Max</td>
+            <td data-i18n="modalDescMultMax">The absolute maximum multiplier any spin can produce. The distribution is hard-capped at this value.</td>
+            <td data-i18n="ruleMultMax">Multiple of 0.1, &gt; Mid3</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="modal-section">
+      <div class="modal-section-title" data-i18n="groupCrashExponentsShort">Crash Exponents</div>
+      <p style="font-size:0.83rem; color:#94a3b8; margin-bottom:0.75rem;" data-i18n-html="modalExpIntro">
+        Each exponent controls the steepness of the power-law distribution within its segment. Higher values make large multipliers rarer within that segment — the distribution crashes more steeply. Lower values flatten the curve, giving higher multipliers a better chance.
+        The inverse-CDF formula used is: <code style="color:var(--param-name)">x = boundaryLow / (1 − u)^(1/exponent)</code>.
+      </p>
+      <table class="param-table">
+        <thead><tr><th data-i18n="modalColParam">Parameter</th><th data-i18n="modalColSegment">Segment</th><th data-i18n="modalColValidation">Validation</th></tr></thead>
+        <tbody>
+          <tr>
+            <td data-i18n="labelExpLowShort">Low</td>
+            <td data-i18n="modalDescExpLow">Min → Mid 1. Controls how quickly the density drops from the minimum. Exponent = 1.0 gives a pure Pareto (power-law) distribution in this segment.</td>
+            <td data-i18n="ruleExpGt0">&gt; 0</td>
+          </tr>
+          <tr>
+            <td data-i18n="labelExpMidShort">Mid</td>
+            <td data-i18n="modalDescExpMid">Mid 1 → Mid 2. Steepness in the medium-value range. Higher values reduce the chance of hitting multipliers above Mid 1.</td>
+            <td data-i18n="ruleExpGt0">&gt; 0</td>
+          </tr>
+          <tr>
+            <td data-i18n="labelExpUpperMidShort">Upper Mid</td>
+            <td data-i18n="modalDescExpUpperMid">Mid 2 → Mid 3. Controls probability of reaching the high-value zone. Typically set much higher than the low/mid exponents to make large wins rare.</td>
+            <td data-i18n="ruleExpGt0">&gt; 0</td>
+          </tr>
+          <tr>
+            <td data-i18n="labelExpHighShort">High</td>
+            <td data-i18n="modalDescExpHigh">Mid 3 → Max. Governs the extreme tail — the rarest, highest-paying outcomes. Usually the largest exponent in the config.</td>
+            <td data-i18n="ruleExpGt0">&gt; 0</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="modal-section">
+      <div class="modal-section-title" data-i18n="modalReservoirTitle">Median Estimation — Knuth Reservoir Sampling</div>
+      <p style="font-size:0.83rem; color:var(--text-sub); margin-bottom:0.9rem;" data-i18n-html="modalReservoirIntro">
+        Computing an exact median requires sorting all values, which would mean storing every spin result in memory.
+        For 500&thinsp;000&thinsp;000 spins × 8 bytes = <strong style="color:var(--text)">4 GB per thread</strong> — completely impractical.
+        Instead, each thread maintains a fixed-size <em>reservoir</em> of <strong style="color:var(--text)">100&thinsp;000</strong> randomly-chosen values
+        and estimates the median from that sample. Error stays well under 0.1% regardless of input size.
+      </p>
+
+      <div class="algo-card">
+        <div class="algo-title" data-i18n="algoTitle">Algorithm (per spin)</div>
+        <div class="algo-steps">
+          <div class="algo-step">
+            <span class="algo-num">1</span>
+            <span data-i18n-html="algoStep1">Increment <code>count</code> (total spins seen so far).</span>
+          </div>
+          <div class="algo-step">
+            <span class="algo-num">2</span>
+            <span data-i18n-html="algoStep2">If <code>count ≤ 100&thinsp;000</code> — fill the reservoir sequentially. Every early spin is guaranteed a slot.</span>
+          </div>
+          <div class="algo-step">
+            <span class="algo-num">3</span>
+            <span data-i18n-html="algoStep3">Otherwise — pick a random integer <code>j</code> in <code>[0, count)</code>.<br>
+              If <code>j &lt; 100&thinsp;000</code>, replace <code>reservoir[j]</code> with the new value; otherwise discard it.</span>
+          </div>
+          <div class="algo-step">
+            <span class="algo-num">4</span>
+            <span data-i18n="algoStep4">At the end, sort the reservoir and return the middle element (or average of the two middle elements).</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="algo-insight" data-i18n-html="algoInsight">
+        <strong>Why it works:</strong> At any point after the reservoir is full, each of the <code>count</code> values seen so far
+        has exactly a <code>100&thinsp;000 / count</code> probability of being in the reservoir — a uniform random sample with no bias toward early or late values.
+        This property was proven by Donald Knuth in <em>The Art of Computer Programming</em> (Algorithm R, Vol. 2).
+        <br><br>
+        <strong>Memory:</strong> O(k) — fixed at 800 KB per thread regardless of spin count.
+        &nbsp;|&nbsp;
+        <strong>Time per spin:</strong> O(1) amortized — one RNG call and one possible array write.
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // ── Translations ────────────────────────────────────────────────
+  const LANGS = ['EN', 'BG', 'RU', 'ZH'];
+
+  const TRANSLATIONS = {
+    EN: {
+      title: 'Crash Simulator',
+      subtitle: 'Multithreaded crash-game distribution simulator',
+      themeLabelLight: 'Light',
+      themeLabelDark: 'Dark',
+      configTitle: 'Configuration',
+      groupSimulation: 'Simulation',
+      groupMultiplierRange: 'Multiplier Range',
+      groupCrashExponents: 'Crash Exponents (steepness per segment)',
+      groupCrashExponentsShort: 'Crash Exponents',
+      labelSpins: 'Spins',
+      tipSpins: 'Total number of individual bets simulated across all threads. Higher values = more stable RTP results.',
+      ruleSpins: '1 – 1,000,000,000',
+      labelThreadCount: 'Thread Count',
+      tipThreadCount: 'Number of parallel worker threads. Spins are divided evenly (max ±1 difference). More threads = faster on multi-core CPUs.',
+      ruleThreadCount: '1 – 8',
+      labelStake: 'Stake',
+      tipStake: 'Fixed amount wagered per spin. Total staked = Stake × Spins. Payout = Stake × multiplier.',
+      ruleStake: '0.1 – 200.0, multiple of 0.1',
+      labelZeroSpin: 'Zero Spin Interval',
+      tipZeroSpin: 'Every Nth spin is forced to pay 0×. E.g. 36 = 1 in 36 spins always pays nothing. Set 0 to disable.',
+      ruleZeroSpin: '≥ 0 (0 = disabled)',
+      labelMultMin: 'Min',
+      tipMultMin: 'Lowest possible multiplier for any non-zero spin. Acts as the floor of the distribution.',
+      ruleMultMin: '> 0, multiple of 0.1, < Mid 1',
+      labelMultMid1: 'Mid 1 (seg 1→2)',
+      tipMultMid1: 'Boundary between segment 1 and 2. Multipliers up to this value use Crash Exponent Low; above it uses Crash Exponent Mid.',
+      ruleMultMid1: 'Multiple of 0.1, Min < Mid1 < Mid2',
+      labelMultMid2: 'Mid 2 (seg 2→3)',
+      tipMultMid2: 'Boundary between segment 2 and 3. The distribution transitions from mid steepness to upper-mid steepness here.',
+      ruleMultMid2: 'Multiple of 0.1, Mid1 < Mid2 < Mid3',
+      labelMultMid3: 'Mid 3 (seg 3→4)',
+      tipMultMid3: 'Boundary between segment 3 and the high-value tail. Marks where the rare big wins begin.',
+      ruleMultMid3: 'Multiple of 0.1, Mid2 < Mid3 < Max',
+      labelMultMax: 'Max',
+      tipMultMax: 'Absolute maximum multiplier any spin can produce. The distribution is hard-capped here.',
+      ruleMultMax: 'Multiple of 0.1, > Mid3',
+      labelExpLow: 'Low [min → mid 1]',
+      tipExpLow: 'Controls steepness of the power-law in the lowest segment. Exponent 1.0 = pure Pareto; higher values make values above Min rarer.',
+      labelExpMid: 'Mid [mid 1 → mid 2]',
+      tipExpMid: 'Steepness in the medium-value segment. Higher values reduce the probability of multipliers above Mid 1.',
+      labelExpUpperMid: 'Upper Mid [mid 2 → mid 3]',
+      tipExpUpperMid: 'Controls probability of reaching the high-value zone. Typically much larger than low/mid to make big wins rare.',
+      labelExpHigh: 'High [mid 3 → max]',
+      tipExpHigh: 'Governs the extreme tail — the rarest, highest-paying outcomes. Usually the largest exponent in the config.',
+      ruleExpGt0: '> 0',
+      btnRun: 'Run Simulation',
+      btnRunning: 'Running…',
+      btnValidating: 'Validating…',
+      btnRunAgain: 'Run Again',
+      progressTitle: 'Thread Progress',
+      colThread: 'Thread',
+      colSpins: 'Spins',
+      colHitRate: 'Hit Rate',
+      colWinRate: 'Win Rate',
+      colMaxMult: 'Max Mult',
+      colAvgMult: 'Avg Mult',
+      colMedianMult: 'Median Mult',
+      colTotalStaked: 'Total Staked',
+      colTotalReturned: 'Total Returned',
+      colRTP: 'RTP',
+      resultsTitle: 'Global Results',
+      statTotalSpins: 'Total Spins',
+      statHitRate: 'Hit Rate',
+      statWinRate: 'Win Rate',
+      statMaxMult: 'Max Multiplier',
+      statAvgMult: 'Avg Multiplier',
+      statMedianMult: 'Median Multiplier',
+      statTotalStaked: 'Total Staked',
+      statTotalReturned: 'Total Returned',
+      statRTP: 'RTP',
+      statElapsed: 'Elapsed Time',
+      modalTitle: 'Parameter Reference',
+      modalColParam: 'Parameter',
+      modalColDesc: 'Description',
+      modalColValidation: 'Validation',
+      modalColSegment: 'Segment',
+      modalDescSpins: 'Total number of individual bets to simulate across all threads. Higher values produce more statistically stable RTP results.',
+      modalDescThreadCount: 'Number of parallel worker threads. Spins are divided evenly across threads (max difference of 1 spin between any two threads). More threads = faster on multi-core machines.',
+      modalDescStake: 'The fixed amount wagered per spin. Total staked = Stake × Spins. Payout per spin = Stake × multiplier.',
+      modalDescZeroSpin: 'Every Nth spin is forced to return a 0× multiplier (a dead spin). For example, interval=36 means 1 in 36 spins always pays nothing. Set to 0 to disable.',
+      modalDescMultMin: 'The lowest possible multiplier that a non-zero spin can produce. Acts as the floor of the distribution. Example: 0.1 means the worst live outcome pays back 10% of stake.',
+      modalDescMultMid1: 'Boundary between segment 1 and segment 2. Multipliers up to this value are governed by Crash Exponent Low. Beyond it, Crash Exponent Mid takes over.',
+      modalDescMultMid2: 'Boundary between segment 2 and segment 3. Marks where the distribution transitions from the mid steepness to the upper-mid steepness.',
+      modalDescMultMid3: 'Boundary between segment 3 and segment 4 (the high-value tail). Marks where the rare big wins begin.',
+      modalDescMultMax: 'The absolute maximum multiplier any spin can produce. The distribution is hard-capped at this value.',
+      modalExpIntro: 'Each exponent controls the steepness of the power-law distribution within its segment. Higher values make large multipliers rarer within that segment — the distribution crashes more steeply. Lower values flatten the curve, giving higher multipliers a better chance. The inverse-CDF formula used is: <code style="color:var(--param-name)">x = boundaryLow / (1 − u)^(1/exponent)</code>.',
+      labelExpLowShort: 'Low',
+      modalDescExpLow: 'Min → Mid 1. Controls how quickly the density drops from the minimum. Exponent = 1.0 gives a pure Pareto (power-law) distribution in this segment.',
+      labelExpMidShort: 'Mid',
+      modalDescExpMid: 'Mid 1 → Mid 2. Steepness in the medium-value range. Higher values reduce the chance of hitting multipliers above Mid 1.',
+      labelExpUpperMidShort: 'Upper Mid',
+      modalDescExpUpperMid: 'Mid 2 → Mid 3. Controls probability of reaching the high-value zone. Typically set much higher than the low/mid exponents to make large wins rare.',
+      labelExpHighShort: 'High',
+      modalDescExpHigh: 'Mid 3 → Max. Governs the extreme tail — the rarest, highest-paying outcomes. Usually the largest exponent in the config.',
+      modalReservoirTitle: 'Median Estimation — Knuth Reservoir Sampling',
+      modalReservoirIntro: 'Computing an exact median requires sorting all values, which would mean storing every spin result in memory. For 500 000 000 spins × 8 bytes = <strong style="color:var(--text)">4 GB per thread</strong> — completely impractical. Instead, each thread maintains a fixed-size <em>reservoir</em> of <strong style="color:var(--text)">100 000</strong> randomly-chosen values and estimates the median from that sample. Error stays well under 0.1% regardless of input size.',
+      algoTitle: 'Algorithm (per spin)',
+      algoStep1: 'Increment <code>count</code> (total spins seen so far).',
+      algoStep2: 'If <code>count ≤ 100 000</code> — fill the reservoir sequentially. Every early spin is guaranteed a slot.',
+      algoStep3: 'Otherwise — pick a random integer <code>j</code> in <code>[0, count)</code>.<br>If <code>j &lt; 100 000</code>, replace <code>reservoir[j]</code> with the new value; otherwise discard it.',
+      algoStep4: 'At the end, sort the reservoir and return the middle element (or average of the two middle elements).',
+      algoInsight: '<strong>Why it works:</strong> At any point after the reservoir is full, each of the <code>count</code> values seen so far has exactly a <code>100 000 / count</code> probability of being in the reservoir — a uniform random sample with no bias toward early or late values. This property was proven by Donald Knuth in <em>The Art of Computer Programming</em> (Algorithm R, Vol. 2).<br><br><strong>Memory:</strong> O(k) — fixed at 800 KB per thread regardless of spin count. &nbsp;|&nbsp; <strong>Time per spin:</strong> O(1) amortized — one RNG call and one possible array write.',
+      errStreamInterrupted: 'Simulation stream interrupted unexpectedly.',
+      errServerUnavailable: 'Could not reach the server. Please try again.',
+      errServerRejected: 'Server rejected the request.',
+    },
+
+    BG: {
+      title: 'Краш Симулатор',
+      subtitle: 'Многонишков симулатор на краш-игрово разпределение',
+      themeLabelLight: 'Светла',
+      themeLabelDark: 'Тъмна',
+      configTitle: 'Конфигурация',
+      groupSimulation: 'Симулация',
+      groupMultiplierRange: 'Диапазон на множителя',
+      groupCrashExponents: 'Краш показатели (стръмност по сегмент)',
+      groupCrashExponentsShort: 'Краш показатели',
+      labelSpins: 'Завъртания',
+      tipSpins: 'Общ брой залози, симулирани от всички нишки. По-високите стойности дават по-стабилни RTP резултати.',
+      ruleSpins: '1 – 1 000 000 000',
+      labelThreadCount: 'Брой нишки',
+      tipThreadCount: 'Брой паралелни работни нишки. Завъртанията се разпределят равномерно (разлика макс. ±1). Повече нишки = по-бързо на многоядрени CPU.',
+      ruleThreadCount: '1 – 8',
+      labelStake: 'Залог',
+      tipStake: 'Фиксирана сума за едно завъртане. Общ залог = Залог × Завъртания. Изплащане = Залог × множител.',
+      ruleStake: '0.1 – 200.0, кратно на 0.1',
+      labelZeroSpin: 'Нулев интервал',
+      tipZeroSpin: 'Всяко N-то завъртане е принудено да върне 0×. Напр. 36 = 1 на 36 завъртания. 0 за изключване.',
+      ruleZeroSpin: '≥ 0 (0 = изключен)',
+      labelMultMin: 'Мин',
+      tipMultMin: 'Най-ниският възможен множител за ненулево завъртане. Долна граница на разпределението.',
+      ruleMultMin: '> 0, кратно на 0.1, < Ср 1',
+      labelMultMid1: 'Ср 1 (сег 1→2)',
+      tipMultMid1: 'Граница между сегмент 1 и 2. До тази стойност важи Краш показател Ниско; над нея – Средно.',
+      ruleMultMid1: 'Кратно на 0.1, Мин < Ср1 < Ср2',
+      labelMultMid2: 'Ср 2 (сег 2→3)',
+      tipMultMid2: 'Граница между сегмент 2 и 3. Разпределението преминава от средна стръмност към горно-средна.',
+      ruleMultMid2: 'Кратно на 0.1, Ср1 < Ср2 < Ср3',
+      labelMultMid3: 'Ср 3 (сег 3→4)',
+      tipMultMid3: 'Граница между сегмент 3 и високоценовата опашка. Тук започват редките големи печалби.',
+      ruleMultMid3: 'Кратно на 0.1, Ср2 < Ср3 < Макс',
+      labelMultMax: 'Макс',
+      tipMultMax: 'Абсолютен максимален множител. Разпределението е твърдо ограничено до тази стойност.',
+      ruleMultMax: 'Кратно на 0.1, > Ср3',
+      labelExpLow: 'Ниско [мин → ср 1]',
+      tipExpLow: 'Стръмност в най-ниския сегмент. 1.0 = чисто Парето; по-високи стойности правят стойностите над Мин по-редки.',
+      labelExpMid: 'Средно [ср 1 → ср 2]',
+      tipExpMid: 'Стръмност в средния сегмент. По-високи стойности намаляват вероятността за множители над Ср 1.',
+      labelExpUpperMid: 'Горно средно [ср 2 → ср 3]',
+      tipExpUpperMid: 'Вероятност за достигане на зоната с висока стойност. Обикновено значително по-голямо от ниско/средно.',
+      labelExpHigh: 'Високо [ср 3 → макс]',
+      tipExpHigh: 'Управлява крайната опашка — най-редките, най-щедрите резултати. Обикновено най-големият показател.',
+      ruleExpGt0: '> 0',
+      btnRun: 'Стартирай симулация',
+      btnRunning: 'Изпълнява се…',
+      btnValidating: 'Валидиране…',
+      btnRunAgain: 'Стартирай отново',
+      progressTitle: 'Напредък на нишките',
+      colThread: 'Нишка',
+      colSpins: 'Завъртания',
+      colHitRate: 'Честота на попадение',
+      colWinRate: 'Честота на печалба',
+      colMaxMult: 'Макс множ.',
+      colAvgMult: 'Ср. множ.',
+      colMedianMult: 'Медиана',
+      colTotalStaked: 'Общо заложено',
+      colTotalReturned: 'Общо върнато',
+      colRTP: 'RTP',
+      resultsTitle: 'Общи резултати',
+      statTotalSpins: 'Общо завъртания',
+      statHitRate: 'Честота на попадение',
+      statWinRate: 'Честота на печалба',
+      statMaxMult: 'Макс множител',
+      statAvgMult: 'Средно множител',
+      statMedianMult: 'Медиана на множителя',
+      statTotalStaked: 'Общо заложено',
+      statTotalReturned: 'Общо върнато',
+      statRTP: 'RTP',
+      statElapsed: 'Изминало време',
+      modalTitle: 'Справочник с параметри',
+      modalColParam: 'Параметър',
+      modalColDesc: 'Описание',
+      modalColValidation: 'Валидация',
+      modalColSegment: 'Сегмент',
+      modalDescSpins: 'Общ брой залози, симулирани от всички нишки. По-високите стойности дават по-стабилни статистически RTP резултати.',
+      modalDescThreadCount: 'Брой паралелни работни нишки. Завъртанията се разпределят равномерно (разлика макс. 1 между две нишки). Повече нишки = по-бързо на многоядрени машини.',
+      modalDescStake: 'Фиксирана сума за едно завъртане. Общо заложено = Залог × Завъртания. Изплащане за завъртане = Залог × множител.',
+      modalDescZeroSpin: 'Всяко N-то завъртане принудително връща 0× (мъртво завъртане). Напр. интервал=36 означава 1 на 36 завъртания. 0 за изключване.',
+      modalDescMultMin: 'Най-ниският множител за ненулево завъртане. Долна граница на разпределението. Пример: 0.1 означава, че най-лошият резултат изплаща 10% от залога.',
+      modalDescMultMid1: 'Граница между сегмент 1 и 2. До тази стойност важи Краш показател Ниско; над нея – Средно.',
+      modalDescMultMid2: 'Граница между сегмент 2 и 3. Разпределението преминава от средна към горно-средна стръмност.',
+      modalDescMultMid3: 'Граница между сегмент 3 и 4 (високоценова опашка). Тук започват редките големи печалби.',
+      modalDescMultMax: 'Абсолютен максимален множител. Разпределението е твърдо ограничено до тази стойност.',
+      modalExpIntro: 'Всеки показател управлява стръмността на степенното разпределение в своя сегмент. По-високите стойности правят големите множители по-редки — разпределението „пада" по-стръмно. По-ниските изравняват кривата. Формулата за обратна CDF е: <code style="color:var(--param-name)">x = boundaryLow / (1 − u)^(1/exponent)</code>.',
+      labelExpLowShort: 'Ниско',
+      modalDescExpLow: 'Мин → Ср 1. Управлява скоростта на спадане на плътността от минимума. Показател 1.0 дава чисто Парето разпределение.',
+      labelExpMidShort: 'Средно',
+      modalDescExpMid: 'Ср 1 → Ср 2. Стръмност в средния диапазон. По-високи стойности намаляват вероятността за множители над Ср 1.',
+      labelExpUpperMidShort: 'Горно средно',
+      modalDescExpUpperMid: 'Ср 2 → Ср 3. Вероятност за достигане на зоната с висока стойност. Обикновено значително по-голямо от останалите.',
+      labelExpHighShort: 'Високо',
+      modalDescExpHigh: 'Ср 3 → Макс. Управлява крайната опашка — най-редките резултати. Обикновено най-голям показател.',
+      modalReservoirTitle: 'Оценка на медианата — Резервоарно вземане на извадка по Кнут',
+      modalReservoirIntro: 'Точната медиана изисква сортиране на всички стойности — съхраняване на всеки резултат в паметта. При 500 000 000 завъртания × 8 байта = <strong style="color:var(--text)">4 GB на нишка</strong> — напълно непрактично. Вместо това всяка нишка поддържа резервоар с фиксиран размер от <strong style="color:var(--text)">100 000</strong> произволно избрани стойности и оценява медианата от тях. Грешката е под 0.1% независимо от размера на входа.',
+      algoTitle: 'Алгоритъм (за едно завъртане)',
+      algoStep1: 'Увеличи <code>count</code> (общ брой видени завъртания).',
+      algoStep2: 'Ако <code>count ≤ 100 000</code> — запълни резервоара последователно. Всяко ранно завъртане е гарантирано място.',
+      algoStep3: 'В противен случай — избери случайно цяло число <code>j</code> в <code>[0, count)</code>.<br>Ако <code>j &lt; 100 000</code>, замени <code>reservoir[j]</code> с новата стойност; иначе я отхвърли.',
+      algoStep4: 'В края сортирай резервоара и върни средния елемент (или средното на двата средни).',
+      algoInsight: '<strong>Защо работи:</strong> В произволен момент след пълненето на резервоара, всяка от видените <code>count</code> стойности има точно вероятност <code>100 000 / count</code> да е в резервоара — равномерна случайна извадка без отклонение. Това е доказано от Доналд Кнут в <em>The Art of Computer Programming</em> (Алгоритъм R, т. 2).<br><br><strong>Памет:</strong> O(k) — фиксирана при 800 KB на нишка. &nbsp;|&nbsp; <strong>Време за завъртане:</strong> O(1) амортизирано — едно извикване на ГЧЧ и едно евентуално записване в масива.',
+      errStreamInterrupted: 'Потокът на симулацията е прекъснат неочаквано.',
+      errServerUnavailable: 'Сървърът е недостъпен. Моля, опитайте отново.',
+      errServerRejected: 'Сървърът отхвърли заявката.',
+    },
+
+    RU: {
+      title: 'Краш Симулятор',
+      subtitle: 'Многопоточный симулятор краш-игрового распределения',
+      themeLabelLight: 'Светлая',
+      themeLabelDark: 'Тёмная',
+      configTitle: 'Конфигурация',
+      groupSimulation: 'Симуляция',
+      groupMultiplierRange: 'Диапазон множителя',
+      groupCrashExponents: 'Краш-показатели (крутизна по сегменту)',
+      groupCrashExponentsShort: 'Краш-показатели',
+      labelSpins: 'Вращений',
+      tipSpins: 'Общее число ставок, симулируемых всеми потоками. Большие значения дают более стабильные результаты RTP.',
+      ruleSpins: '1 – 1 000 000 000',
+      labelThreadCount: 'Число потоков',
+      tipThreadCount: 'Количество параллельных рабочих потоков. Вращения распределяются равномерно (разница макс. ±1). Больше потоков = быстрее на многоядерных CPU.',
+      ruleThreadCount: '1 – 8',
+      labelStake: 'Ставка',
+      tipStake: 'Фиксированная сумма за одно вращение. Итого ставок = Ставка × Вращений. Выплата = Ставка × множитель.',
+      ruleStake: '0.1 – 200.0, кратно 0.1',
+      labelZeroSpin: 'Нулевой интервал',
+      tipZeroSpin: 'Каждое N-е вращение принудительно даёт 0×. Напр. 36 = каждое 36-е. 0 — отключить.',
+      ruleZeroSpin: '≥ 0 (0 = отключено)',
+      labelMultMin: 'Мин',
+      tipMultMin: 'Минимально возможный множитель для ненулевого вращения. Нижняя граница распределения.',
+      ruleMultMin: '> 0, кратно 0.1, < Сред 1',
+      labelMultMid1: 'Сред 1 (сег 1→2)',
+      tipMultMid1: 'Граница между сегментами 1 и 2. До этого значения действует Краш-показатель Низкий; выше — Средний.',
+      ruleMultMid1: 'Кратно 0.1, Мин < Сред1 < Сред2',
+      labelMultMid2: 'Сред 2 (сег 2→3)',
+      tipMultMid2: 'Граница между сегментами 2 и 3. Распределение переходит от средней крутизны к верхне-средней.',
+      ruleMultMid2: 'Кратно 0.1, Сред1 < Сред2 < Сред3',
+      labelMultMid3: 'Сред 3 (сег 3→4)',
+      tipMultMid3: 'Граница между сегментом 3 и «хвостом» высоких значений. Здесь начинаются редкие крупные выигрыши.',
+      ruleMultMid3: 'Кратно 0.1, Сред2 < Сред3 < Макс',
+      labelMultMax: 'Макс',
+      tipMultMax: 'Абсолютный максимальный множитель. Распределение жёстко ограничено этим значением.',
+      ruleMultMax: 'Кратно 0.1, > Сред3',
+      labelExpLow: 'Низкий [мин → сред 1]',
+      tipExpLow: 'Крутизна в нижнем сегменте. 1.0 = чистое Парето; большие значения делают значения выше Мин более редкими.',
+      labelExpMid: 'Средний [сред 1 → сред 2]',
+      tipExpMid: 'Крутизна в среднем сегменте. Большие значения снижают вероятность множителей выше Сред 1.',
+      labelExpUpperMid: 'Верхне-средний [сред 2 → сред 3]',
+      tipExpUpperMid: 'Вероятность попасть в зону высоких значений. Обычно значительно больше низкого/среднего.',
+      labelExpHigh: 'Высокий [сред 3 → макс]',
+      tipExpHigh: 'Управляет крайним «хвостом» — самыми редкими, самыми щедрыми исходами. Обычно наибольший показатель.',
+      ruleExpGt0: '> 0',
+      btnRun: 'Запустить симуляцию',
+      btnRunning: 'Выполняется…',
+      btnValidating: 'Проверка…',
+      btnRunAgain: 'Запустить снова',
+      progressTitle: 'Прогресс потоков',
+      colThread: 'Поток',
+      colSpins: 'Вращений',
+      colHitRate: 'Частота попаданий',
+      colWinRate: 'Частота выигрышей',
+      colMaxMult: 'Макс множ.',
+      colAvgMult: 'Ср. множ.',
+      colMedianMult: 'Медиана',
+      colTotalStaked: 'Всего поставлено',
+      colTotalReturned: 'Всего выплачено',
+      colRTP: 'RTP',
+      resultsTitle: 'Глобальные результаты',
+      statTotalSpins: 'Всего вращений',
+      statHitRate: 'Частота попаданий',
+      statWinRate: 'Частота выигрышей',
+      statMaxMult: 'Макс. множитель',
+      statAvgMult: 'Ср. множитель',
+      statMedianMult: 'Медиана множителя',
+      statTotalStaked: 'Всего поставлено',
+      statTotalReturned: 'Всего выплачено',
+      statRTP: 'RTP',
+      statElapsed: 'Затраченное время',
+      modalTitle: 'Справочник параметров',
+      modalColParam: 'Параметр',
+      modalColDesc: 'Описание',
+      modalColValidation: 'Валидация',
+      modalColSegment: 'Сегмент',
+      modalDescSpins: 'Общее число ставок, симулируемых всеми потоками. Большие значения дают более стабильные статистические результаты RTP.',
+      modalDescThreadCount: 'Количество параллельных рабочих потоков. Вращения распределяются равномерно (разница макс. 1 между потоками). Больше потоков = быстрее на многоядерных машинах.',
+      modalDescStake: 'Фиксированная сумма за одно вращение. Итого ставок = Ставка × Вращений. Выплата за вращение = Ставка × множитель.',
+      modalDescZeroSpin: 'Каждое N-е вращение принудительно возвращает 0× (мёртвое вращение). Например, интервал=36 — каждое 36-е. 0 — отключить.',
+      modalDescMultMin: 'Минимально возможный множитель для ненулевого вращения. Нижняя граница распределения. Пример: 0.1 означает, что худший исход возвращает 10% ставки.',
+      modalDescMultMid1: 'Граница между сегментами 1 и 2. До этого значения действует Краш-показатель Низкий; выше — Средний.',
+      modalDescMultMid2: 'Граница между сегментами 2 и 3. Распределение переходит от средней крутизны к верхне-средней.',
+      modalDescMultMid3: 'Граница между сегментом 3 и 4 (высокий «хвост»). Здесь начинаются редкие крупные выигрыши.',
+      modalDescMultMax: 'Абсолютный максимальный множитель. Распределение жёстко ограничено этим значением.',
+      modalExpIntro: 'Каждый показатель управляет крутизной степенного распределения в своём сегменте. Большие значения делают крупные множители более редкими — распределение «падает» круче. Меньшие значения выравнивают кривую. Формула обратной CDF: <code style="color:var(--param-name)">x = boundaryLow / (1 − u)^(1/exponent)</code>.',
+      labelExpLowShort: 'Низкий',
+      modalDescExpLow: 'Мин → Сред 1. Управляет скоростью спада плотности от минимума. Показатель 1.0 — чистое Парето-распределение.',
+      labelExpMidShort: 'Средний',
+      modalDescExpMid: 'Сред 1 → Сред 2. Крутизна в среднем диапазоне. Большие значения снижают вероятность множителей выше Сред 1.',
+      labelExpUpperMidShort: 'Верхне-средний',
+      modalDescExpUpperMid: 'Сред 2 → Сред 3. Вероятность попасть в зону высоких значений. Обычно значительно больше остальных.',
+      labelExpHighShort: 'Высокий',
+      modalDescExpHigh: 'Сред 3 → Макс. Управляет крайним «хвостом» — самыми редкими исходами. Обычно наибольший показатель.',
+      modalReservoirTitle: 'Оценка медианы — Резервуарная выборка Кнута',
+      modalReservoirIntro: 'Точная медиана требует сортировки всех значений — хранения каждого результата в памяти. При 500 000 000 вращениях × 8 байт = <strong style="color:var(--text)">4 ГБ на поток</strong> — полностью непрактично. Вместо этого каждый поток поддерживает резервуар фиксированного размера из <strong style="color:var(--text)">100 000</strong> случайно выбранных значений и оценивает медиану по ним. Погрешность не превышает 0.1% независимо от размера входных данных.',
+      algoTitle: 'Алгоритм (за одно вращение)',
+      algoStep1: 'Увеличить <code>count</code> (общее число просмотренных вращений).',
+      algoStep2: 'Если <code>count ≤ 100 000</code> — заполнить резервуар последовательно. Каждое раннее вращение гарантированно получает место.',
+      algoStep3: 'Иначе — выбрать случайное целое <code>j</code> из <code>[0, count)</code>.<br>Если <code>j &lt; 100 000</code>, заменить <code>reservoir[j]</code> новым значением; иначе — отбросить.',
+      algoStep4: 'В конце отсортировать резервуар и вернуть средний элемент (или среднее двух средних).',
+      algoInsight: '<strong>Почему это работает:</strong> В любой момент после заполнения резервуара каждое из просмотренных <code>count</code> значений имеет ровно вероятность <code>100 000 / count</code> находиться в резервуаре — равномерная случайная выборка без смещения. Это доказано Дональдом Кнутом в <em>The Art of Computer Programming</em> (Алгоритм R, т. 2).<br><br><strong>Память:</strong> O(k) — фиксировано 800 КБ на поток. &nbsp;|&nbsp; <strong>Время за вращение:</strong> O(1) амортизировано — один вызов ГСЧ и одна возможная запись в массив.',
+      errStreamInterrupted: 'Поток симуляции неожиданно прерван.',
+      errServerUnavailable: 'Сервер недоступен. Пожалуйста, попробуйте снова.',
+      errServerRejected: 'Сервер отклонил запрос.',
+    },
+
+    ZH: {
+      title: '崩溃模拟器',
+      subtitle: '多线程崩溃游戏分布模拟器',
+      themeLabelLight: '浅色',
+      themeLabelDark: '深色',
+      configTitle: '配置',
+      groupSimulation: '模拟',
+      groupMultiplierRange: '倍数范围',
+      groupCrashExponents: '崩溃指数（各段陡度）',
+      groupCrashExponentsShort: '崩溃指数',
+      labelSpins: '旋转次数',
+      tipSpins: '所有线程模拟的总投注数。数值越高，RTP结果越稳定。',
+      ruleSpins: '1 – 1,000,000,000',
+      labelThreadCount: '线程数',
+      tipThreadCount: '并行工作线程数。旋转次数均匀分配（最多相差±1）。多核CPU上线程越多越快。',
+      ruleThreadCount: '1 – 8',
+      labelStake: '赌注',
+      tipStake: '每次旋转的固定投注金额。总投注 = 赌注 × 旋转次数。赔付 = 赌注 × 倍数。',
+      ruleStake: '0.1 – 200.0，0.1的倍数',
+      labelZeroSpin: '零旋转间隔',
+      tipZeroSpin: '每第N次旋转强制赔付0×。例如36 = 每36次必有一次零赔付。0表示禁用。',
+      ruleZeroSpin: '≥ 0（0 = 禁用）',
+      labelMultMin: '最小值',
+      tipMultMin: '非零旋转的最低可能倍数。分布的下限。',
+      ruleMultMin: '> 0，0.1的倍数，< 中间值1',
+      labelMultMid1: '中间1（段1→2）',
+      tipMultMid1: '段1和段2的分界。此值以下使用低崩溃指数，以上使用中崩溃指数。',
+      ruleMultMid1: '0.1的倍数，最小值 < 中1 < 中2',
+      labelMultMid2: '中间2（段2→3）',
+      tipMultMid2: '段2和段3的分界。分布从中等陡度过渡到上中陡度。',
+      ruleMultMid2: '0.1的倍数，中1 < 中2 < 中3',
+      labelMultMid3: '中间3（段3→4）',
+      tipMultMid3: '段3与高值尾部的分界。罕见大赢从这里开始。',
+      ruleMultMid3: '0.1的倍数，中2 < 中3 < 最大值',
+      labelMultMax: '最大值',
+      tipMultMax: '任意旋转能产生的绝对最大倍数。分布在此硬上限。',
+      ruleMultMax: '0.1的倍数，> 中3',
+      labelExpLow: '低段 [最小→中1]',
+      tipExpLow: '控制最低段的幂律陡度。指数1.0 = 纯帕累托；更高值使最小值以上更罕见。',
+      labelExpMid: '中段 [中1→中2]',
+      tipExpMid: '中值段的陡度。更高值降低超过中1的倍数概率。',
+      labelExpUpperMid: '上中段 [中2→中3]',
+      tipExpUpperMid: '控制进入高值区的概率。通常远大于低/中段，使大赢罕见。',
+      labelExpHigh: '高段 [中3→最大]',
+      tipExpHigh: '控制极端尾部——最罕见、赔付最高的结果。通常是配置中最大的指数。',
+      ruleExpGt0: '> 0',
+      btnRun: '运行模拟',
+      btnRunning: '运行中…',
+      btnValidating: '验证中…',
+      btnRunAgain: '再次运行',
+      progressTitle: '线程进度',
+      colThread: '线程',
+      colSpins: '旋转次数',
+      colHitRate: '命中率',
+      colWinRate: '获胜率',
+      colMaxMult: '最大倍数',
+      colAvgMult: '平均倍数',
+      colMedianMult: '中位数',
+      colTotalStaked: '总投注',
+      colTotalReturned: '总返还',
+      colRTP: 'RTP',
+      resultsTitle: '全局结果',
+      statTotalSpins: '总旋转次数',
+      statHitRate: '命中率',
+      statWinRate: '获胜率',
+      statMaxMult: '最大倍数',
+      statAvgMult: '平均倍数',
+      statMedianMult: '倍数中位数',
+      statTotalStaked: '总投注',
+      statTotalReturned: '总返还',
+      statRTP: 'RTP',
+      statElapsed: '耗时',
+      modalTitle: '参数参考',
+      modalColParam: '参数',
+      modalColDesc: '说明',
+      modalColValidation: '验证',
+      modalColSegment: '段',
+      modalDescSpins: '所有线程模拟的总投注数。数值越高，统计RTP结果越稳定。',
+      modalDescThreadCount: '并行工作线程数。旋转次数均匀分配（任意两线程最多相差1）。多核机器上线程越多越快。',
+      modalDescStake: '每次旋转的固定投注金额。总投注 = 赌注 × 旋转次数。每次旋转赔付 = 赌注 × 倍数。',
+      modalDescZeroSpin: '每第N次旋转强制返回0×倍数（死旋转）。例如间隔=36表示每36次中有1次零赔付。0表示禁用。',
+      modalDescMultMin: '非零旋转的最低可能倍数。分布的下限。示例：0.1表示最差结果返还赌注的10%。',
+      modalDescMultMid1: '段1和段2的分界。此值以下由低崩溃指数控制；以上由中崩溃指数接管。',
+      modalDescMultMid2: '段2和段3的分界。分布从中等陡度过渡到上中陡度。',
+      modalDescMultMid3: '段3和段4（高值尾部）的分界。罕见大赢从这里开始。',
+      modalDescMultMax: '任意旋转能产生的绝对最大倍数。分布在此值硬上限。',
+      modalExpIntro: '每个指数控制其段内幂律分布的陡度。更高值使大倍数更罕见——分布崩溃更陡。更低值使曲线更平坦。使用的逆CDF公式为：<code style="color:var(--param-name)">x = boundaryLow / (1 − u)^(1/exponent)</code>。',
+      labelExpLowShort: '低段',
+      modalDescExpLow: '最小值→中1。控制密度从最小值下降的速度。指数=1.0在此段给出纯帕累托（幂律）分布。',
+      labelExpMidShort: '中段',
+      modalDescExpMid: '中1→中2。中值范围的陡度。更高值降低超过中1的倍数机会。',
+      labelExpUpperMidShort: '上中段',
+      modalDescExpUpperMid: '中2→中3。控制进入高值区的概率。通常远高于低/中指数，使大赢罕见。',
+      labelExpHighShort: '高段',
+      modalDescExpHigh: '中3→最大值。控制极端尾部——最罕见的结果。通常是配置中最大的指数。',
+      modalReservoirTitle: '中位数估算——Knuth水库抽样',
+      modalReservoirIntro: '精确中位数需要对所有值排序——意味着在内存中存储每个旋转结果。对于5亿次旋转 × 8字节 = <strong style="color:var(--text)">每线程4 GB</strong>——完全不切实际。每个线程维护一个固定大小<strong style="color:var(--text)">100,000</strong>个随机选择值的水库，并从该样本中估算中位数。无论输入大小，误差均低于0.1%。',
+      algoTitle: '算法（每次旋转）',
+      algoStep1: '递增 <code>count</code>（迄今已见旋转总数）。',
+      algoStep2: '若 <code>count ≤ 100,000</code> —— 顺序填充水库。每个早期旋转都保证有一个槽位。',
+      algoStep3: '否则——在 <code>[0, count)</code> 中选取随机整数 <code>j</code>。<br>若 <code>j &lt; 100,000</code>，用新值替换 <code>reservoir[j]</code>；否则丢弃。',
+      algoStep4: '最后对水库排序，返回中间元素（或两个中间元素的平均值）。',
+      algoInsight: '<strong>为何有效：</strong>水库填满后的任意时刻，迄今已见的 <code>count</code> 个值中每个都有恰好 <code>100,000 / count</code> 的概率在水库中——对早期和晚期值无偏的均匀随机样本。此性质由Donald Knuth在《计算机程序设计艺术》（算法R，第2卷）中证明。<br><br><strong>内存：</strong>O(k)——每线程固定800 KB，与旋转次数无关。 &nbsp;|&nbsp; <strong>每次旋转时间：</strong>O(1)摊销——一次RNG调用和一次可能的数组写入。',
+      errStreamInterrupted: '模拟流意外中断。',
+      errServerUnavailable: '无法连接服务器，请重试。',
+      errServerRejected: '服务器拒绝了请求。',
+    }
+  };
+
+  let currentLang = 'EN';
+
+  function applyLang(lang) {
+    currentLang = lang;
+    const t = TRANSLATIONS[lang];
+
+    // update trigger button label
+    document.getElementById('langLabel').textContent = lang;
+
+    // update active state on menu options
+    document.querySelectorAll('.lang-option').forEach(opt => {
+      opt.classList.toggle('active', opt.dataset.lang === lang);
+    });
+
+    document.title = t.title;
+
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+      const key = el.getAttribute('data-i18n');
+      if (t[key] !== undefined) el.textContent = t[key];
+    });
+    document.querySelectorAll('[data-i18n-html]').forEach(el => {
+      const key = el.getAttribute('data-i18n-html');
+      if (t[key] !== undefined) el.innerHTML = t[key];
+    });
+
+    // keep theme label in sync with current theme
+    const isDark = document.documentElement.getAttribute('data-theme') !== 'light';
+    document.getElementById('themeLabel').textContent = isDark ? t.themeLabelLight : t.themeLabelDark;
+
+    localStorage.setItem('lang', lang);
+  }
+
+  (function initLang() {
+    const saved = localStorage.getItem('lang');
+    if (saved && TRANSLATIONS[saved]) {
+      applyLang(saved);
+    }
+  })();
+
+  // Dropdown open/close
+  const langDropdown = document.getElementById('langDropdown');
+  const btnLang = document.getElementById('btnLang');
+
+  btnLang.addEventListener('click', e => {
+    e.stopPropagation();
+    langDropdown.classList.toggle('open');
+  });
+
+  document.querySelectorAll('.lang-option').forEach(opt => {
+    opt.addEventListener('click', () => {
+      applyLang(opt.dataset.lang);
+      langDropdown.classList.remove('open');
+    });
+  });
+
+  document.addEventListener('click', e => {
+    if (!langDropdown.contains(e.target)) langDropdown.classList.remove('open');
+  });
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') langDropdown.classList.remove('open');
+  });
+  // ────────────────────────────────────────────────────────────────
+
+  // ── Theme toggle ────────────────────────────────────────────────
+  const html = document.documentElement;
+  const btnTheme = document.getElementById('btnTheme');
+  const themeIcon = document.getElementById('themeIcon');
+  const themeLabel = document.getElementById('themeLabel');
+
+  // sun SVG: circle + 8 rays
+  const SVG_SUN = `<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="12" cy="12" r="4"/>
+    <line x1="12" y1="2" x2="12" y2="5"/>
+    <line x1="12" y1="19" x2="12" y2="22"/>
+    <line x1="2" y1="12" x2="5" y2="12"/>
+    <line x1="19" y1="12" x2="22" y2="12"/>
+    <line x1="4.93" y1="4.93" x2="7.05" y2="7.05"/>
+    <line x1="16.95" y1="16.95" x2="19.07" y2="19.07"/>
+    <line x1="19.07" y1="4.93" x2="16.95" y2="7.05"/>
+    <line x1="7.05" y1="16.95" x2="4.93" y2="19.07"/>
+  </svg>`;
+  // crescent SVG: path-based quarter moon
+  const SVG_MOON = `<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+    <path d="M21 12.79A9 9 0 1 1 11.21 3a7 7 0 1 0 9.79 9.79z"/>
+  </svg>`;
+
+  function applyTheme(theme) {
+    html.setAttribute('data-theme', theme);
+    const t = TRANSLATIONS[currentLang];
+    if (theme === 'light') {
+      themeIcon.innerHTML = SVG_MOON;
+      themeLabel.textContent = t.themeLabelDark;
+    } else {
+      themeIcon.innerHTML = SVG_SUN;
+      themeLabel.textContent = t.themeLabelLight;
+    }
+  }
+
+  (function initTheme() {
+    const saved = localStorage.getItem('theme');
+    if (saved) {
+      applyTheme(saved);
+    } else if (window.matchMedia('(prefers-color-scheme: light)').matches) {
+      applyTheme('light');
+    }
+    // else: keep default 'dark' set on <html>
+  })();
+
+  btnTheme.addEventListener('click', () => {
+    const next = html.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+    applyTheme(next);
+    localStorage.setItem('theme', next);
+  });
+  // ────────────────────────────────────────────────────────────────
+
+  const form = document.getElementById('configForm');
+  const runBtn = document.getElementById('runBtn');
+  const spinner = document.getElementById('spinner');
+  const btnLabel = document.getElementById('btnLabel');
+  const threadBody = document.getElementById('threadTableBody');
+  const spinsInput = document.getElementById('spinsDisplay');
+
+  // Format spins with thousands separators live while typing
+  function formatSpins() {
+    const el = spinsInput;
+    const raw = el.value.replace(/,/g, '');
+    if (raw === '') return;
+    const num = parseInt(raw, 10);
+    if (isNaN(num)) return;
+    const cursorFromEnd = el.value.length - (el.selectionEnd ?? el.value.length);
+    el.value = num.toLocaleString('en-US');
+    // reposition cursor: walk back from end skipping over inserted commas
+    const formatted = el.value;
+    let pos = formatted.length, digits = 0;
+    for (let i = formatted.length - 1; i >= 0 && digits < cursorFromEnd; i--) {
+      if (formatted[i] !== ',') digits++;
+      pos = i;
+    }
+    el.setSelectionRange(pos, pos);
+  }
+  function unformatSpins() {
+    spinsInput.value = spinsInput.value.replace(/,/g, '');
+  }
+
+  spinsInput.addEventListener('input', () => {
+    spinsInput.value = spinsInput.value.replace(/[^\d]/g, '');
+    formatSpins();
+  });
+  formatSpins();
+
+  let activeSource = null;
+
+  form.addEventListener('submit', e => {
+    e.preventDefault();
+    startSimulation();
+  });
+
+  function v(id) { return parseFloat(document.getElementById(id)?.value) || 0; }
+  function vi(id) { return parseInt(document.getElementById(id)?.value, 10) || 0; }
+  function div01(n) { return Math.abs(Math.round(n * 10) - n * 10) < 1e-6; }
+
+  function clientValidate() {
+    const errors = [];
+    const invalid = new Set();
+
+    const spins = parseInt(spinsInput.value.replace(/,/g, ''), 10);
+    if (isNaN(spins) || spins < 1 || spins > 1_000_000_000) {
+      errors.push('Spins must be between 1 and 1,000,000,000.');
+      invalid.add('spinsDisplay');
+    }
+
+    const tc = vi('f-threadCount');
+    if (tc < 1 || tc > 8) { errors.push('Thread count must be between 1 and 8.'); invalid.add('f-threadCount'); }
+
+    const stake = v('f-stake');
+    if (stake <= 0 || stake > 200) { errors.push('Stake must be between 0.1 and 200.0.'); invalid.add('f-stake'); }
+    else if (!div01(stake)) { errors.push('Stake must be divisible by 0.1.'); invalid.add('f-stake'); }
+
+    const zsi = vi('f-zeroSpinInterval');
+    if (zsi < 0) { errors.push('Zero spin interval must be 0 or greater.'); invalid.add('f-zeroSpinInterval'); }
+
+    const mn = v('f-multiplierMin'), m1 = v('f-multiplierMid1'), m2 = v('f-multiplierMid2'),
+          m3 = v('f-multiplierMid3'), mx = v('f-multiplierMax');
+
+    if (!div01(mn)) { errors.push('Multiplier Min must be divisible by 0.1.'); invalid.add('f-multiplierMin'); }
+    if (!div01(m1)) { errors.push('Multiplier Mid 1 must be divisible by 0.1.'); invalid.add('f-multiplierMid1'); }
+    if (!div01(m2)) { errors.push('Multiplier Mid 2 must be divisible by 0.1.'); invalid.add('f-multiplierMid2'); }
+    if (!div01(m3)) { errors.push('Multiplier Mid 3 must be divisible by 0.1.'); invalid.add('f-multiplierMid3'); }
+    if (!div01(mx)) { errors.push('Multiplier Max must be divisible by 0.1.'); invalid.add('f-multiplierMax'); }
+
+    if (!(mn < m1 && m1 < m2 && m2 < m3 && m3 < mx)) {
+      errors.push('Multiplier boundaries must satisfy: Min < Mid1 < Mid2 < Mid3 < Max.');
+      ['f-multiplierMin','f-multiplierMid1','f-multiplierMid2','f-multiplierMid3','f-multiplierMax'].forEach(id => invalid.add(id));
+    }
+
+    ['f-crashExponentLow','f-crashExponentMid','f-crashExponentUpperMid','f-crashExponentHigh'].forEach(id => {
+      if (v(id) <= 0) { errors.push(`${document.querySelector(`#${id}`)?.closest('.field')?.querySelector('label')?.textContent ?? id} must be > 0.`); invalid.add(id); }
+    });
+
+    // apply / clear invalid styling
+    document.querySelectorAll('.field input').forEach(el => el.classList.remove('invalid'));
+    invalid.forEach(id => document.getElementById(id)?.classList.add('invalid'));
+
+    const box = document.getElementById('errorBox');
+    const list = document.getElementById('errorList');
+    if (errors.length) {
+      list.innerHTML = errors.map(e => `<li>${e}</li>`).join('');
+      box.style.display = 'block';
+    } else {
+      box.style.display = 'none';
+    }
+    return errors.length === 0;
+  }
+
+  function startSimulation() {
+    if (!clientValidate()) return;
+    if (activeSource) { activeSource.close(); }
+
+    unformatSpins();  // strip commas so FormData sends a plain integer
+    const params = new URLSearchParams(new FormData(form)).toString();
+    formatSpins();    // restore formatted display after FormData snapshot
+
+    runBtn.disabled = true;
+    spinner.style.display = 'block';
+    btnLabel.textContent = TRANSLATIONS[currentLang].btnValidating;
+
+    fetch('/simulate/validate?' + params)
+      .then(res => res.json())
+      .then(body => {
+        if (!body.valid) {
+          const list = document.getElementById('errorList');
+          list.innerHTML = (body.errors || [TRANSLATIONS[currentLang].errServerRejected]).map(e => `<li>${e}</li>`).join('');
+          document.getElementById('errorBox').style.display = 'block';
+          runBtn.disabled = false;
+          spinner.style.display = 'none';
+          btnLabel.textContent = TRANSLATIONS[currentLang].btnRun;
+          return;
+        }
+
+        threadBody.innerHTML = '';
+        document.getElementById('section-progress').style.display = 'block';
+        document.getElementById('section-results').style.display = 'none';
+        btnLabel.textContent = TRANSLATIONS[currentLang].btnRunning;
+
+        activeSource = new EventSource('/simulate/stream?' + params);
+
+        activeSource.addEventListener('thread', ev => {
+          const r = JSON.parse(ev.data);
+          const rtp = (r.totalReturned / r.totalStaked * 100).toFixed(2);
+          const row = document.createElement('tr');
+          row.className = 'thread-row';
+          row.innerHTML = `
+            <td>T${r.threadId}</td>
+            <td>${fmt(r.spins)}</td>
+            <td>${(r.hitRate * 100 / r.spins).toFixed(2)}%</td>
+            <td>${(r.wins * 100 / r.spins).toFixed(2)}%</td>
+            <td>${r.maxMultiplier.toFixed(1)}</td>
+            <td>${r.avgMultiplier.toFixed(4)}</td>
+            <td>${r.medianMultiplier.toFixed(1)}</td>
+            <td>${fmt2(r.totalStaked)}</td>
+            <td>${fmt2(r.totalReturned)}</td>
+            <td>${rtp}%</td>
+          `;
+          threadBody.appendChild(row);
+        });
+
+        activeSource.addEventListener('complete', ev => {
+          const g = JSON.parse(ev.data);
+          document.getElementById('r-spins').textContent = fmt(g.totalSpins);
+          document.getElementById('r-hitRate').textContent = g.hitRatePct.toFixed(2) + '%';
+          document.getElementById('r-winRate').textContent = g.winRatePct.toFixed(2) + '%';
+          document.getElementById('r-maxMult').textContent = g.maxMultiplier.toFixed(1) + 'x';
+          document.getElementById('r-avgMult').textContent = g.avgMultiplier.toFixed(4);
+          document.getElementById('r-medianMult').textContent = g.medianMultiplier.toFixed(1);
+          document.getElementById('r-staked').textContent = fmt2(g.totalStaked);
+          document.getElementById('r-returned').textContent = fmt2(g.totalReturned);
+          document.getElementById('r-rtp').textContent = g.rtp.toFixed(4) + '%';
+          document.getElementById('r-elapsed').textContent = formatMs(g.elapsedMs);
+          document.getElementById('section-results').style.display = 'block';
+
+          activeSource.close();
+          runBtn.disabled = false;
+          spinner.style.display = 'none';
+          btnLabel.textContent = TRANSLATIONS[currentLang].btnRunAgain;
+        });
+
+        activeSource.onerror = () => {
+          activeSource.close();
+          runBtn.disabled = false;
+          spinner.style.display = 'none';
+          btnLabel.textContent = TRANSLATIONS[currentLang].btnRun;
+          const box = document.getElementById('errorBox');
+          if (box.style.display === 'none') {
+            document.getElementById('errorList').innerHTML = `<li>${TRANSLATIONS[currentLang].errStreamInterrupted}</li>`;
+            box.style.display = 'block';
+          }
+        };
+      })
+      .catch(() => {
+        runBtn.disabled = false;
+        spinner.style.display = 'none';
+        btnLabel.textContent = TRANSLATIONS[currentLang].btnRun;
+        document.getElementById('errorList').innerHTML = `<li>${TRANSLATIONS[currentLang].errServerUnavailable}</li>`;
+        document.getElementById('errorBox').style.display = 'block';
+      });
+  }
+
+  document.getElementById('btnInfo').addEventListener('click', () => {
+    document.getElementById('infoModal').classList.add('open');
+  });
+  document.getElementById('modalClose').addEventListener('click', () => {
+    document.getElementById('infoModal').classList.remove('open');
+  });
+  document.getElementById('infoModal').addEventListener('click', e => {
+    if (e.target === e.currentTarget) e.currentTarget.classList.remove('open');
+  });
+
+  function fmt(n) { return Number(n).toLocaleString(); }
+  function fmt2(n) { return Number(n).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2}); }
+  function formatMs(ms) {
+    const min = Math.floor(ms / 60000);
+    const sec = Math.floor((ms % 60000) / 1000);
+    const rem = ms % 1000;
+    return `${min}m ${sec}s ${rem}ms`;
+  }
+</script>
+
+</body>
+</html>
