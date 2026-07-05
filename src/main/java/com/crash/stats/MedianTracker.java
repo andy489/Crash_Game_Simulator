@@ -29,11 +29,15 @@ public class MedianTracker {
     }
 
     public double median() {
+        return percentile(0.5);
+    }
+
+    public double percentile(double p) {
         if (count == 0) return 0.0;
         int size = (int) Math.min(count, CAPACITY);
         double[] sample = Arrays.copyOf(reservoir, size);
         Arrays.sort(sample);
-        if (size % 2 == 1) return sample[size / 2];
-        return (sample[size / 2 - 1] + sample[size / 2]) / 2.0;
+        int idx = (int) Math.round(p * (size - 1));
+        return sample[Math.min(idx, size - 1)];
     }
 }

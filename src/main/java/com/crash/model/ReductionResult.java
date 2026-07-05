@@ -4,10 +4,12 @@ public record ReductionResult(
     int threadId,
     int spins,
     int wins,
-    int hitRate,
     double totalStaked,
     double totalReturned,
     double maxMultiplier,
-    double avgMultiplier,
-    double medianMultiplier
+    double avgCrashMultiplier,
+    double medianCrashMultiplier,
+    double p90CrashMultiplier,
+    double sumSquaredCrash,
+    long[] histogramCounts
 ) {}

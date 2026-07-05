@@ -1,14 +1,21 @@
 package com.crash.model;
 
 public record SimulationResult(
-    int totalSpins,
-    double hitRatePct,
+    int totalRounds,
     double winRatePct,
-    double maxMultiplier,
-    double avgMultiplier,
-    double medianMultiplier,
+    double cashOutMultiplier,
+    double maxCrashMultiplier,
+    double avgCrashMultiplier,
+    double medianCrashMultiplier,
     double totalStaked,
     double totalReturned,
     double rtp,
-    long elapsedMs
+    double stdDev,
+    double volatilityIndex,
+    String volatilityLabel,
+    long elapsedMs,
+    String strategyWeights,
+    String strategyMultipliers,
+    long[] histogramCounts,
+    double[] histogramEdges
 ) {}

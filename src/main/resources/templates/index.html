@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMiAzMiIgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIj4KICA8Y2lyY2xlIGN4PSIxNiIgY3k9IjE2IiByPSIxNiIgZmlsbD0iIzBmMTExNyIvPgogIDxwYXRoIGQ9Ik0xNiA0IEMxMiA4IDExIDE0IDExIDE4IEwxNiAyMSBMMjEgMTggQzIxIDE0IDIwIDggMTYgNFoiIGZpbGw9IiM4MThjZjgiLz4KICA8cGF0aCBkPSJNMTYgNCBDMTQgNyAxMy41IDExIDEzLjUgMTQgTDE2IDE1LjUgTDE2IDRaIiBmaWxsPSIjYTViNGZjIi8+CiAgPHBhdGggZD0iTTExIDE4IEw4IDIzIEwxMyAyMVoiIGZpbGw9IiM2MzY2ZjEiLz4KICA8cGF0aCBkPSJNMjEgMTggTDI0IDIzIEwxOSAyMVoiIGZpbGw9IiM2MzY2ZjEiLz4KICA8Y2lyY2xlIGN4PSIxNiIgY3k9IjE0IiByPSIyLjIiIGZpbGw9IiMwZjExMTciLz4KICA8Y2lyY2xlIGN4PSIxNiIgY3k9IjE0IiByPSIxLjQiIGZpbGw9IiMzOGJkZjgiLz4KICA8ZWxsaXBzZSBjeD0iMTYiIGN5PSIyMy41IiByeD0iMi44IiByeT0iNCIgZmlsbD0iI2Y1OWUwYiIgb3BhY2l0eT0iMC45Ii8+CiAgPGVsbGlwc2UgY3g9IjE2IiBjeT0iMjMiIHJ4PSIxLjUiIHJ5PSIyLjUiIGZpbGw9IiNmZWYwOGEiLz4KICA8Y2lyY2xlIGN4PSI1IiBjeT0iNyIgcj0iMC43IiBmaWxsPSJ3aGl0ZSIgb3BhY2l0eT0iMC44Ii8+CiAgPGNpcmNsZSBjeD0iMjciIGN5PSIxMCIgcj0iMC41IiBmaWxsPSJ3aGl0ZSIgb3BhY2l0eT0iMC43Ii8+CiAgPGNpcmNsZSBjeD0iOCIgY3k9IjI1IiByPSIwLjYiIGZpbGw9IndoaXRlIiBvcGFjaXR5PSIwLjYiLz4KICA8Y2lyY2xlIGN4PSIyNSIgY3k9IjI2IiByPSIwLjQiIGZpbGw9IndoaXRlIiBvcGFjaXR5PSIwLjUiLz4KICA8Y2lyY2xlIGN4PSI0IiBjeT0iMTkiIHI9IjAuNSIgZmlsbD0id2hpdGUiIG9wYWNpdHk9IjAuNyIvPgogIDxjaXJjbGUgY3g9IjI4IiBjeT0iMjIiIHI9IjAuNiIgZmlsbD0id2hpdGUiIG9wYWNpdHk9IjAuNiIvPgo8L3N2Zz4="/>
   <title>Crash Simulator</title>
   <style>
     /* ── Theme tokens ─────────────────────────────────────────────── */
@@ -263,6 +264,60 @@
     .grid-4 { grid-template-columns: repeat(4, 1fr); }
     .grid-5 { grid-template-columns: repeat(5, 1fr); }
 
+    /* ── Config card ─────────────────────────────────────────────── */
+    .config-card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1.25rem;
+    }
+    .config-card-header h2 { margin-bottom: 0; }
+
+    .config-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0;
+    }
+
+    .config-col {
+      padding: 0 1.5rem;
+      border-right: 1px solid var(--card-border);
+    }
+    .config-col:first-child { padding-left: 0; }
+    .config-col:last-child  { padding-right: 0; border-right: none; }
+
+    .config-col-label {
+      font-size: 0.68rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--accent);
+      margin-bottom: 0.85rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 1px solid color-mix(in srgb, var(--accent) 25%, transparent);
+    }
+
+    .config-col .field + .field { margin-top: 0.85rem; }
+
+    .form-footer {
+      margin-top: 1.5rem;
+      padding-top: 1.25rem;
+      border-top: 1px solid var(--card-border);
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    @media (max-width: 680px) {
+      .config-grid { grid-template-columns: 1fr; }
+      .config-col {
+        padding: 1rem 0 0;
+        border-right: none;
+        border-top: 1px solid var(--card-border);
+      }
+      .config-col:first-child { padding-top: 0; border-top: none; }
+    }
+
     .param-group {
       margin-bottom: 1.25rem;
     }
@@ -394,10 +449,103 @@
 
     .stat-box .value.highlight { color: var(--highlight); }
 
+    .stat-box-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 0.3rem;
+    }
+    .stat-box-header .label { margin-bottom: 0; }
+
+    .stat-info {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 14px; height: 14px;
+      border-radius: 50%;
+      border: 1px solid var(--tip-icon-b);
+      background: transparent;
+      color: var(--tip-icon-c);
+      font-size: 0.58rem;
+      font-weight: 700;
+      font-style: normal;
+      cursor: default;
+      flex-shrink: 0;
+      line-height: 1;
+      transition: border-color 0.15s, color 0.15s;
+      position: relative;
+    }
+
+    .stat-tip-wrap {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+    }
+    .stat-tip-wrap:hover .stat-info,
+    .stat-tip-wrap:focus-within .stat-info { border-color: var(--thread-id); color: var(--thread-id); }
+
+    .stat-tip-box {
+      display: none;
+      position: absolute;
+      bottom: calc(100% + 6px);
+      right: 0;
+      width: 230px;
+      background: var(--tip-bg);
+      border: 1px solid var(--tip-border);
+      border-radius: 8px;
+      padding: 0.6rem 0.75rem;
+      font-size: 0.76rem;
+      color: var(--text-tipbox);
+      line-height: 1.5;
+      z-index: 50;
+      pointer-events: none;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.25);
+    }
+    .stat-tip-box::after {
+      content: '';
+      position: absolute;
+      top: 100%;
+      right: 8px;
+      border: 5px solid transparent;
+      border-top-color: var(--tip-tip);
+    }
+    .stat-tip-wrap:hover .stat-tip-box,
+    .stat-tip-wrap:focus-within .stat-tip-box { display: block; }
+
+    .volatility-badge {
+      display: inline-block;
+      font-size: 0.7rem;
+      font-weight: 700;
+      padding: 0.1rem 0.45rem;
+      border-radius: 999px;
+      margin-left: 0.4rem;
+      vertical-align: middle;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .vol-low          { background: #14532d; color: #4ade80; }
+    .vol-medium       { background: #78350f; color: #fbbf24; }
+    .vol-high         { background: #7c2d12; color: #fb923c; }
+    .vol-extreme      { background: #4c0519; color: #f87171; }
+    [data-theme="light"] .vol-low          { background: #dcfce7; color: #15803d; }
+    [data-theme="light"] .vol-medium       { background: #fef3c7; color: #b45309; }
+    [data-theme="light"] .vol-high         { background: #ffedd5; color: #c2410c; }
+    [data-theme="light"] .vol-extreme      { background: #fee2e2; color: #b91c1c; }
+
     #section-results { display: none; }
     #section-progress { display: none; }
 
     .field input.invalid { border-color: #f87171; }
+
+    .cashout-mode-toggle { display: flex; gap: 0.4rem; margin-bottom: 0.5rem; }
+    .mode-btn {
+      flex: 1; padding: 0.3rem 0.6rem; border-radius: 6px; font-size: 0.78rem; font-weight: 600; cursor: pointer;
+      border: 1.5px solid var(--border); background: var(--card-bg); color: var(--text-sub); transition: all 0.15s;
+    }
+    .mode-btn:hover { border-color: var(--accent); color: var(--accent); }
+    .mode-btn.mode-btn-active { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 15%, transparent); color: var(--accent); }
+    .strategy-sublabel { display: block; font-size: 0.72rem; color: var(--text-sub); margin: 0.45rem 0 0.2rem; }
+    .field input[type=text] { width: 100%; box-sizing: border-box; }
 
     .error-box {
       background: var(--err-bg);
@@ -578,6 +726,16 @@
       border: 5px solid transparent;
       border-top-color: var(--tip-tip);
     }
+    .tip-down .tip-box {
+      bottom: auto;
+      top: calc(100% + 6px);
+    }
+    .tip-down .tip-box::after {
+      top: auto;
+      bottom: 100%;
+      border-top-color: transparent;
+      border-bottom-color: var(--tip-tip);
+    }
     .tip-box .tip-rule {
       margin-top: 0.4rem;
       padding-top: 0.4rem;
@@ -657,6 +815,39 @@
       padding: 0.05rem 0.35rem;
       font-size: 0.79rem;
     }
+
+    /* Histogram chart */
+    #histogram-wrap {
+      position: relative;
+      padding-bottom: 1.8rem;
+    }
+    #histCanvas {
+      display: block;
+      width: 100%;
+      height: 220px;
+    }
+    #hist-x-labels {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.68rem;
+      color: var(--text-sub);
+      padding: 0 2px;
+      margin-top: 0.25rem;
+    }
+    .hist-bar-tooltip {
+      position: absolute;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 0.3rem 0.55rem;
+      font-size: 0.75rem;
+      color: var(--text);
+      pointer-events: none;
+      white-space: nowrap;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.18);
+      display: none;
+      z-index: 10;
+    }
   </style>
 </head>
 <body>
@@ -699,85 +890,72 @@
 </div>
 
 <!-- Config Form -->
-<div class="card">
-  <h2><span data-i18n="configTitle">Configuration</span> <button class="btn-info" id="btnInfo" type="button" title="Parameter reference">i</button></h2>
+<div class="card config-card">
+  <div class="config-card-header">
+    <h2><span data-i18n="configTitle">Configuration</span></h2>
+    <button class="btn-info" id="btnInfo" type="button" title="Parameter reference">i</button>
+  </div>
   <form id="configForm">
+    <div class="config-grid">
 
-    <!-- Group 1: Simulation -->
-    <div class="param-group">
-      <div class="param-group-label" data-i18n="groupSimulation">Simulation</div>
-      <div class="grid grid-4">
+      <!-- Column 1: Simulation -->
+      <div class="config-col">
+        <div class="config-col-label" data-i18n="groupSimulation">Simulation</div>
         <div class="field">
-          <label><span data-i18n="labelSpins">Spins</span> <span class="tip-wrap"><i class="tip-icon">i</i><span class="tip-box"><span data-i18n="tipSpins">Total number of individual bets simulated across all threads. Higher values = more stable RTP results.</span><div class="tip-rule" data-i18n="ruleSpins">1 – 1,000,000,000</div></span></span></label>
+          <label><span data-i18n="labelSpins">Rounds</span> <span class="tip-wrap"><i class="tip-icon">i</i><span class="tip-box"><span data-i18n="tipSpins">Total number of crash rounds simulated across all threads. Higher values = more stable RTP results.</span><div class="tip-rule" data-i18n="ruleSpins">1 – 1,000,000,000</div></span></span></label>
           <input type="text" id="spinsDisplay" name="spins" th:value="${config.spins}" required autocomplete="off"/>
         </div>
         <div class="field">
-          <label><span data-i18n="labelThreadCount">Thread Count</span> <span class="tip-wrap"><i class="tip-icon">i</i><span class="tip-box"><span data-i18n="tipThreadCount">Number of parallel worker threads. Spins are divided evenly (max ±1 difference). More threads = faster on multi-core CPUs.</span><div class="tip-rule" data-i18n="ruleThreadCount">1 – 8</div></span></span></label>
+          <label><span data-i18n="labelThreadCount">Thread Count</span> <span class="tip-wrap"><i class="tip-icon">i</i><span class="tip-box"><span data-i18n="tipThreadCount">Number of parallel worker threads. Rounds are divided evenly (max ±1 difference). More threads = faster on multi-core CPUs.</span><div class="tip-rule" data-i18n="ruleThreadCount">1 – 8</div></span></span></label>
           <input type="number" id="f-threadCount" name="threadCount" th:value="${config.threadCount}" min="1" required/>
         </div>
+      </div>
+
+      <!-- Column 2: Bet -->
+      <div class="config-col">
+        <div class="config-col-label" data-i18n="groupBet">Bet</div>
         <div class="field">
-          <label><span data-i18n="labelStake">Stake</span> <span class="tip-wrap"><i class="tip-icon">i</i><span class="tip-box"><span data-i18n="tipStake">Fixed amount wagered per spin. Total staked = Stake × Spins. Payout = Stake × multiplier.</span><div class="tip-rule" data-i18n="ruleStake">0.1 – 200.0, multiple of 0.1</div></span></span></label>
+          <label><span data-i18n="labelStake">Stake</span> <span class="tip-wrap"><i class="tip-icon">i</i><span class="tip-box"><span data-i18n="tipStake">Fixed amount wagered per round. Win payout = Stake × Cash-out Multiplier. Loss = full stake lost.</span><div class="tip-rule" data-i18n="ruleStake">0.1 – 200.0, multiple of 0.1</div></span></span></label>
           <input type="number" step="0.1" id="f-stake" name="stake" th:value="${config.stake}" required/>
         </div>
         <div class="field">
-          <label><span data-i18n="labelZeroSpin">Zero Spin Interval</span> <span class="tip-wrap"><i class="tip-icon">i</i><span class="tip-box"><span data-i18n="tipZeroSpin">Every Nth spin is forced to pay 0×. E.g. 36 = 1 in 36 spins always pays nothing. Set 0 to disable.</span><div class="tip-rule" data-i18n="ruleZeroSpin">≥ 0 (0 = disabled)</div></span></span></label>
-          <input type="number" id="f-zeroSpinInterval" name="zeroSpinInterval" th:value="${config.zeroSpinInterval}" required/>
+          <label><span data-i18n="labelCashOut">Cash-out Multiplier</span> <span class="tip-wrap tip-down"><i class="tip-icon">i</i><span class="tip-box" style="width:290px;" data-i18n-html="tipCashOut">Single mode: one fixed multiplier for every round. Win if crash point ≥ value; payout = Stake × multiplier. <span style="color:var(--accent)">e.g. 2.00x → win pays 2× stake</span>. · Strategy mode: define multiple targets with percentage weights summing to 100. Each round randomly picks a target using those weights. <span style="color:var(--accent)">e.g. weights <code>33.3, 33.3, 33.4</code> / multipliers <code>2.0, 3.5, 50.0</code> → equal chance for each target.</span> Payout = Stake × selected target.<div class="tip-rule"><b>Single:</b> 1.01 or more, in steps of 0.01, less than Max Multiplier<br><b>Strategy:</b> weights sum to 100, each &gt; 0 · multipliers same rules · min 2 entries</div></span></span></label>
+          <div class="cashout-mode-toggle">
+            <button type="button" id="btn-mode-single" class="mode-btn mode-btn-active" onclick="setCashOutMode('single')" data-i18n="modeSingle">Single</button>
+            <button type="button" id="btn-mode-strategy" class="mode-btn" onclick="setCashOutMode('strategy')" data-i18n="modeStrategy">Strategy</button>
+          </div>
+          <!-- Single mode -->
+          <div id="cashout-single">
+            <input type="number" step="0.01" id="f-cashOutMultiplier" name="cashOutMultiplier" th:value="${config.cashOutMultiplier}"/>
+          </div>
+          <!-- Strategy mode -->
+          <div id="cashout-strategy" style="display:none;">
+            <input type="hidden" id="f-cashOutMultiplierHidden" name="cashOutMultiplier" value="0"/>
+            <label class="strategy-sublabel" data-i18n="labelStrategyWeights">Weights (sum=100)</label>
+            <input type="text" id="f-strategyWeights" name="strategyWeights" placeholder="e.g. 33.3, 33.3, 33.4"/>
+            <label class="strategy-sublabel" data-i18n="labelStrategyMultipliers">Multipliers</label>
+            <input type="text" id="f-strategyMultipliers" name="strategyMultipliers" placeholder="e.g. 2.0, 3.5, 50.0"/>
+          </div>
         </div>
       </div>
-    </div>
 
-    <!-- Group 2: Multiplier Range -->
-    <div class="param-group">
-      <div class="param-group-label" data-i18n="groupMultiplierRange">Multiplier Range</div>
-      <div class="grid grid-5">
+      <!-- Column 3: Distribution -->
+      <div class="config-col">
+        <div class="config-col-label" data-i18n="groupDistribution">Distribution</div>
         <div class="field">
-          <label><span data-i18n="labelMultMin">Min</span> <span class="tip-wrap"><i class="tip-icon">i</i><span class="tip-box"><span data-i18n="tipMultMin">Lowest possible multiplier for any non-zero spin. Acts as the floor of the distribution.</span><div class="tip-rule" data-i18n="ruleMultMin">&gt; 0, multiple of 0.1, &lt; Mid 1</div></span></span></label>
-          <input type="number" step="0.1" id="f-multiplierMin" name="multiplierMin" th:value="${config.multiplierMin}" required/>
-        </div>
-        <div class="field">
-          <label><span data-i18n="labelMultMid1">Mid 1 (seg 1→2)</span> <span class="tip-wrap"><i class="tip-icon">i</i><span class="tip-box"><span data-i18n="tipMultMid1">Boundary between segment 1 and 2. Multipliers up to this value use Crash Exponent Low; above it uses Crash Exponent Mid.</span><div class="tip-rule" data-i18n="ruleMultMid1">Multiple of 0.1, Min &lt; Mid1 &lt; Mid2</div></span></span></label>
-          <input type="number" step="0.1" id="f-multiplierMid1" name="multiplierMid1" th:value="${config.multiplierMid1}" required/>
-        </div>
-        <div class="field">
-          <label><span data-i18n="labelMultMid2">Mid 2 (seg 2→3)</span> <span class="tip-wrap"><i class="tip-icon">i</i><span class="tip-box"><span data-i18n="tipMultMid2">Boundary between segment 2 and 3. The distribution transitions from mid steepness to upper-mid steepness here.</span><div class="tip-rule" data-i18n="ruleMultMid2">Multiple of 0.1, Mid1 &lt; Mid2 &lt; Mid3</div></span></span></label>
-          <input type="number" step="0.1" id="f-multiplierMid2" name="multiplierMid2" th:value="${config.multiplierMid2}" required/>
-        </div>
-        <div class="field">
-          <label><span data-i18n="labelMultMid3">Mid 3 (seg 3→4)</span> <span class="tip-wrap"><i class="tip-icon">i</i><span class="tip-box"><span data-i18n="tipMultMid3">Boundary between segment 3 and the high-value tail. Marks where the rare big wins begin.</span><div class="tip-rule" data-i18n="ruleMultMid3">Multiple of 0.1, Mid2 &lt; Mid3 &lt; Max</div></span></span></label>
-          <input type="number" step="0.1" id="f-multiplierMid3" name="multiplierMid3" th:value="${config.multiplierMid3}" required/>
-        </div>
-        <div class="field">
-          <label><span data-i18n="labelMultMax">Max</span> <span class="tip-wrap"><i class="tip-icon">i</i><span class="tip-box"><span data-i18n="tipMultMax">Absolute maximum multiplier any spin can produce. The distribution is hard-capped here.</span><div class="tip-rule" data-i18n="ruleMultMax">Multiple of 0.1, &gt; Mid3</div></span></span></label>
+          <label><span data-i18n="labelMultMax">Max Multiplier</span> <span class="tip-wrap"><i class="tip-icon">i</i><span class="tip-box"><span data-i18n="tipMultMax">The highest crash point any round can produce. The pure Pareto distribution is hard-capped at this value — higher cap = rarer jackpots, same 100% theoretical RTP.</span><div class="tip-rule" data-i18n="ruleMultMax">Default 5,000× · min 10 · max 100,000 · must be &gt; cash-out</div></span></span></label>
           <input type="number" step="0.1" id="f-multiplierMax" name="multiplierMax" th:value="${config.multiplierMax}" required/>
         </div>
+        <div class="field">
+          <label><span data-i18n="labelInstantCrash">Instant Crash Interval</span> <span class="tip-wrap"><i class="tip-icon">i</i><span class="tip-box"><span data-i18n="tipInstantCrash">Every Nth round crashes instantly at 1.0× — player always loses. E.g. 44 = 1 in 44 rounds is a forced instant crash. Set 0 to disable.</span><div class="tip-rule" data-i18n="ruleInstantCrash">≥ 0 (0 = disabled)</div></span></span></label>
+          <input type="number" id="f-instantCrashInterval" name="instantCrashInterval" th:value="${config.instantCrashInterval}" required/>
+        </div>
       </div>
-    </div>
 
-    <!-- Group 3: Crash Exponents -->
-    <div class="param-group">
-      <div class="param-group-label" data-i18n="groupCrashExponents">Crash Exponents (steepness per segment)</div>
-      <div class="grid grid-4">
-        <div class="field">
-          <label><span data-i18n="labelExpLow">Low [min → mid 1]</span> <span class="tip-wrap"><i class="tip-icon">i</i><span class="tip-box"><span data-i18n="tipExpLow">Controls steepness of the power-law in the lowest segment. Exponent 1.0 = pure Pareto; higher values make values above Min rarer.</span><div class="tip-rule" data-i18n="ruleExpGt0">&gt; 0</div></span></span></label>
-          <input type="number" step="0.01" id="f-crashExponentLow" name="crashExponentLow" th:value="${config.crashExponentLow}" required/>
-        </div>
-        <div class="field">
-          <label><span data-i18n="labelExpMid">Mid [mid 1 → mid 2]</span> <span class="tip-wrap"><i class="tip-icon">i</i><span class="tip-box"><span data-i18n="tipExpMid">Steepness in the medium-value segment. Higher values reduce the probability of multipliers above Mid 1.</span><div class="tip-rule" data-i18n="ruleExpGt0">&gt; 0</div></span></span></label>
-          <input type="number" step="0.01" id="f-crashExponentMid" name="crashExponentMid" th:value="${config.crashExponentMid}" required/>
-        </div>
-        <div class="field">
-          <label><span data-i18n="labelExpUpperMid">Upper Mid [mid 2 → mid 3]</span> <span class="tip-wrap"><i class="tip-icon">i</i><span class="tip-box"><span data-i18n="tipExpUpperMid">Controls probability of reaching the high-value zone. Typically much larger than low/mid to make big wins rare.</span><div class="tip-rule" data-i18n="ruleExpGt0">&gt; 0</div></span></span></label>
-          <input type="number" step="0.01" id="f-crashExponentUpperMid" name="crashExponentUpperMid" th:value="${config.crashExponentUpperMid}" required/>
-        </div>
-        <div class="field">
-          <label><span data-i18n="labelExpHigh">High [mid 3 → max]</span> <span class="tip-wrap"><i class="tip-icon">i</i><span class="tip-box"><span data-i18n="tipExpHigh">Governs the extreme tail — the rarest, highest-paying outcomes. Usually the largest exponent in the config.</span><div class="tip-rule" data-i18n="ruleExpGt0">&gt; 0</div></span></span></label>
-          <input type="number" step="0.01" id="f-crashExponentHigh" name="crashExponentHigh" th:value="${config.crashExponentHigh}" required/>
-        </div>
-      </div>
     </div>
 
     <div id="errorBox" class="error-box"><ul id="errorList"></ul></div>
-    <div>
+    <div class="form-footer">
       <button type="submit" class="btn-run" id="runBtn">
         <div class="spinner" id="spinner"></div>
         <span id="btnLabel" data-i18n="btnRun">Run Simulation</span>
@@ -789,16 +967,18 @@
 <!-- Per-thread progress -->
 <div class="card" id="section-progress">
   <h2><span data-i18n="progressTitle">Thread Progress</span> <span id="threadCountLabel"></span></h2>
+  <div style="overflow-x: auto; -webkit-overflow-scrolling: touch;">
   <table>
     <thead>
       <tr>
         <th data-i18n="colThread">Thread</th>
-        <th data-i18n="colSpins">Spins</th>
-        <th data-i18n="colHitRate">Hit Rate</th>
+        <th data-i18n="colSpins">Rounds</th>
         <th data-i18n="colWinRate">Win Rate</th>
-        <th data-i18n="colMaxMult">Max Mult</th>
-        <th data-i18n="colAvgMult">Avg Mult</th>
-        <th data-i18n="colMedianMult">Median Mult</th>
+        <th data-i18n="colMaxMult">Max Crash</th>
+        <th data-i18n="colAvgMult">Avg Crash</th>
+        <th data-i18n="colMedianMult">Median Crash</th>
+        <th data-i18n="colStdDev">Std Dev</th>
+        <th data-i18n="colVolatility">Vol. Index</th>
         <th data-i18n="colTotalStaked">Total Staked</th>
         <th data-i18n="colTotalReturned">Total Returned</th>
         <th data-i18n="colRTP">RTP</th>
@@ -806,22 +986,119 @@
     </thead>
     <tbody id="threadTableBody"></tbody>
   </table>
+  </div>
 </div>
 
 <!-- Global results -->
 <div class="card" id="section-results">
   <h2 data-i18n="resultsTitle">Global Results</h2>
   <div class="stat-grid">
-    <div class="stat-box"><div class="label" data-i18n="statTotalSpins">Total Spins</div><div class="value" id="r-spins">—</div></div>
-    <div class="stat-box"><div class="label" data-i18n="statHitRate">Hit Rate</div><div class="value" id="r-hitRate">—</div></div>
-    <div class="stat-box"><div class="label" data-i18n="statWinRate">Win Rate</div><div class="value" id="r-winRate">—</div></div>
-    <div class="stat-box"><div class="label" data-i18n="statMaxMult">Max Multiplier</div><div class="value highlight" id="r-maxMult">—</div></div>
-    <div class="stat-box"><div class="label" data-i18n="statAvgMult">Avg Multiplier</div><div class="value" id="r-avgMult">—</div></div>
-    <div class="stat-box"><div class="label" data-i18n="statMedianMult">Median Multiplier</div><div class="value" id="r-medianMult">—</div></div>
-    <div class="stat-box"><div class="label" data-i18n="statTotalStaked">Total Staked</div><div class="value" id="r-staked">—</div></div>
-    <div class="stat-box"><div class="label" data-i18n="statTotalReturned">Total Returned</div><div class="value" id="r-returned">—</div></div>
-    <div class="stat-box"><div class="label" data-i18n="statRTP">RTP</div><div class="value highlight" id="r-rtp">—</div></div>
-    <div class="stat-box"><div class="label" data-i18n="statElapsed">Elapsed Time</div><div class="value" id="r-elapsed">—</div></div>
+
+    <div class="stat-box">
+      <div class="stat-box-header">
+        <div class="label" data-i18n="statTotalSpins">Total Rounds</div>
+        <span class="stat-tip-wrap"><i class="stat-info">i</i><span class="stat-tip-box" data-i18n="tipStatTotalSpins">Total number of crash rounds simulated across all threads.</span></span>
+      </div>
+      <div class="value" id="r-spins">—</div>
+    </div>
+
+    <div class="stat-box">
+      <div class="stat-box-header">
+        <div class="label" data-i18n="statWinRate">Win Rate</div>
+        <span class="stat-tip-wrap"><i class="stat-info">i</i><span class="stat-tip-box" data-i18n="tipStatWinRate">Percentage of rounds where the crash point was ≥ the chosen cash-out multiplier. Theoretical: 1 / cashOut.</span></span>
+      </div>
+      <div class="value" id="r-winRate">—</div>
+    </div>
+
+    <div class="stat-box">
+      <div class="stat-box-header">
+        <div class="label" data-i18n="statCashOut">Cash-out Multiplier</div>
+        <span class="stat-tip-wrap"><i class="stat-info">i</i><span class="stat-tip-box" data-i18n="tipStatCashOut">Single mode: the fixed multiplier used every round — shown as e.g. 2.00x. · Strategy mode: each pair shows weight%→multiplier (e.g. 55%→17x). Each round randomly picks one target using the configured weights. The weighted average multiplier is shown as a hover tooltip. Win payout = Stake × the selected target for that round.</span></span>
+      </div>
+      <div class="value highlight" id="r-cashOut">—</div>
+    </div>
+
+    <div class="stat-box">
+      <div class="stat-box-header">
+        <div class="label" data-i18n="statMaxMult">Max Crash</div>
+        <span class="stat-tip-wrap"><i class="stat-info">i</i><span class="stat-tip-box" data-i18n="tipStatMaxMult">The single highest crash point observed across all rounds in this simulation run.</span></span>
+      </div>
+      <div class="value highlight" id="r-maxMult">—</div>
+    </div>
+
+    <div class="stat-box">
+      <div class="stat-box-header">
+        <div class="label" data-i18n="statAvgMult">Avg Crash</div>
+        <span class="stat-tip-wrap"><i class="stat-info">i</i><span class="stat-tip-box" data-i18n="tipStatAvgMult">Arithmetic mean of all crash points. For a pure Pareto distribution capped at Max, this converges to ln(Max).</span></span>
+      </div>
+      <div class="value" id="r-avgMult">—</div>
+    </div>
+
+    <div class="stat-box">
+      <div class="stat-box-header">
+        <div class="label" data-i18n="statMedianMult">Median Crash</div>
+        <span class="stat-tip-wrap"><i class="stat-info">i</i><span class="stat-tip-box" data-i18n="tipStatMedianMult">Estimated median crash point from Knuth reservoir sampling (100,000-sample reservoir per thread). Converges to 2.0× for a pure Pareto distribution.</span></span>
+      </div>
+      <div class="value" id="r-medianMult">—</div>
+    </div>
+
+    <div class="stat-box">
+      <div class="stat-box-header">
+        <div class="label" data-i18n="statStdDev">Std Deviation</div>
+        <span class="stat-tip-wrap"><i class="stat-info">i</i><span class="stat-tip-box" data-i18n="tipStatStdDev">Standard deviation of crash points: √(E[X²] − E[X]²). Measures the typical distance of crash points from the mean. High std dev = wide swings around the average.</span></span>
+      </div>
+      <div class="value" id="r-stddev">—</div>
+    </div>
+
+    <div class="stat-box">
+      <div class="stat-box-header">
+        <div class="label" data-i18n="statVolatility">Volatility Index</div>
+        <span class="stat-tip-wrap"><i class="stat-info">i</i><span class="stat-tip-box" data-i18n="tipStatVolatility">P90 / P50 ratio of crash points. Scale: Low &lt;3 · Medium 3–6 · High 6–12 · Extreme &gt;12. Higher = rarer but bigger crashes.</span></span>
+      </div>
+      <div class="value" id="r-volatility">—</div>
+    </div>
+
+    <div class="stat-box">
+      <div class="stat-box-header">
+        <div class="label" data-i18n="statTotalStaked">Total Staked</div>
+        <span class="stat-tip-wrap"><i class="stat-info">i</i><span class="stat-tip-box" data-i18n="tipStatTotalStaked">Sum of all stakes wagered across every round (Stake × Total Rounds).</span></span>
+      </div>
+      <div class="value" id="r-staked">—</div>
+    </div>
+
+    <div class="stat-box">
+      <div class="stat-box-header">
+        <div class="label" data-i18n="statTotalReturned">Total Returned</div>
+        <span class="stat-tip-wrap"><i class="stat-info">i</i><span class="stat-tip-box" data-i18n="tipStatTotalReturned">Sum of all payouts on winning rounds (Wins × Stake × Cash-out Multiplier).</span></span>
+      </div>
+      <div class="value" id="r-returned">—</div>
+    </div>
+
+    <div class="stat-box">
+      <div class="stat-box-header">
+        <div class="label" data-i18n="statRTP">RTP</div>
+        <span class="stat-tip-wrap"><i class="stat-info">i</i><span class="stat-tip-box" data-i18n="tipStatRTP">Return to Player: Total Returned ÷ Total Staked × 100%. Theoretical 100% with no instant crashes (pure Pareto). Each 1-in-N instant crash reduces RTP by ≈1/N × 100%.</span></span>
+      </div>
+      <div class="value highlight" id="r-rtp">—</div>
+    </div>
+
+    <div class="stat-box">
+      <div class="stat-box-header">
+        <div class="label" data-i18n="statElapsed">Elapsed Time</div>
+        <span class="stat-tip-wrap"><i class="stat-info">i</i><span class="stat-tip-box" data-i18n="tipStatElapsed">Wall-clock time from simulation start to last thread completing, including thread pool overhead.</span></span>
+      </div>
+      <div class="value" id="r-elapsed">—</div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Crash point distribution histogram -->
+<div class="card" id="section-histogram" style="display:none;">
+  <h2 data-i18n="histTitle">Crash Point Distribution</h2>
+  <div id="histogram-wrap">
+    <canvas id="histCanvas"></canvas>
+    <div id="hist-x-labels"></div>
   </div>
 </div>
 
@@ -837,94 +1114,96 @@
         <thead><tr><th data-i18n="modalColParam">Parameter</th><th data-i18n="modalColDesc">Description</th><th data-i18n="modalColValidation">Validation</th></tr></thead>
         <tbody>
           <tr>
-            <td data-i18n="labelSpins">Spins</td>
-            <td data-i18n="modalDescSpins">Total number of individual bets to simulate across all threads. Higher values produce more statistically stable RTP results.</td>
+            <td data-i18n="labelSpins">Rounds</td>
+            <td data-i18n="modalDescSpins">Total number of crash rounds to simulate across all threads. Higher values produce more statistically stable RTP results.</td>
             <td data-i18n="ruleSpins">1 – 1,000,000,000</td>
           </tr>
           <tr>
             <td data-i18n="labelThreadCount">Thread Count</td>
-            <td data-i18n="modalDescThreadCount">Number of parallel worker threads. Spins are divided evenly across threads (max difference of 1 spin between any two threads). More threads = faster on multi-core machines.</td>
+            <td data-i18n="modalDescThreadCount">Number of parallel worker threads. Rounds are divided evenly across threads (max difference of 1 between any two threads). More threads = faster on multi-core machines.</td>
             <td data-i18n="ruleThreadCount">1 – 8</td>
           </tr>
           <tr>
             <td data-i18n="labelStake">Stake</td>
-            <td data-i18n="modalDescStake">The fixed amount wagered per spin. Total staked = Stake × Spins. Payout per spin = Stake × multiplier.</td>
+            <td data-i18n="modalDescStake">The fixed amount wagered per round. Win payout = Stake × Cash-out Multiplier. On a loss, the full stake is lost.</td>
             <td data-i18n="ruleStake">0.1 – 200.0, must be a multiple of 0.1</td>
           </tr>
           <tr>
-            <td data-i18n="labelZeroSpin">Zero Spin Interval</td>
-            <td data-i18n="modalDescZeroSpin">Every Nth spin is forced to return a 0× multiplier (a dead spin). For example, interval=36 means 1 in 36 spins always pays nothing. Set to 0 to disable.</td>
-            <td data-i18n="ruleZeroSpin">≥ 0 (0 = disabled)</td>
+            <td data-i18n="labelCashOut">Cash-out Multiplier</td>
+            <td data-i18n="modalDescCashOut">The multiplier the player targets each round. <strong>Single mode:</strong> one fixed multiplier — win if crash point ≥ value; payout = Stake × multiplier. <strong>Strategy mode:</strong> define multiple multipliers with percentage weights (summing to 100). Each round randomly picks one target using those weights; payout = Stake × selected target.</td>
+            <td data-i18n="ruleCashOut">≥ 1.01, ×0.01, &lt; Max Multiplier · Strategy weights: each &gt; 0, sum = 100 · ≥ 2 entries</td>
+          </tr>
+          <tr>
+            <td data-i18n="labelInstantCrash">Instant Crash Interval</td>
+            <td data-i18n="modalDescInstantCrash">Every Nth round is a forced instant crash at 1.0× — the player always loses that stake. For example, interval=44 means 1 in 44 rounds is forced (≈ 2.3% RTP reduction). Set to 0 to disable.</td>
+            <td data-i18n="ruleInstantCrash">≥ 0 (0 = disabled)</td>
           </tr>
         </tbody>
       </table>
     </div>
 
     <div class="modal-section">
-      <div class="modal-section-title" data-i18n="groupMultiplierRange">Multiplier Range</div>
-      <table class="param-table">
-        <thead><tr><th data-i18n="modalColParam">Parameter</th><th data-i18n="modalColDesc">Description</th><th data-i18n="modalColValidation">Validation</th></tr></thead>
-        <tbody>
-          <tr>
-            <td data-i18n="labelMultMin">Min</td>
-            <td data-i18n="modalDescMultMin">The lowest possible multiplier that a non-zero spin can produce. Acts as the floor of the distribution. Example: 0.1 means the worst live outcome pays back 10% of stake.</td>
-            <td data-i18n="ruleMultMin">&gt; 0, multiple of 0.1, &lt; Mid 1</td>
-          </tr>
-          <tr>
-            <td>Mid 1</td>
-            <td data-i18n="modalDescMultMid1">Boundary between segment 1 and segment 2. Multipliers up to this value are governed by Crash Exponent Low. Beyond it, Crash Exponent Mid takes over.</td>
-            <td data-i18n="ruleMultMid1">Multiple of 0.1, Min &lt; Mid1 &lt; Mid2</td>
-          </tr>
-          <tr>
-            <td>Mid 2</td>
-            <td data-i18n="modalDescMultMid2">Boundary between segment 2 and segment 3. Marks where the distribution transitions from the mid steepness to the upper-mid steepness.</td>
-            <td data-i18n="ruleMultMid2">Multiple of 0.1, Mid1 &lt; Mid2 &lt; Mid3</td>
-          </tr>
-          <tr>
-            <td>Mid 3</td>
-            <td data-i18n="modalDescMultMid3">Boundary between segment 3 and segment 4 (the high-value tail). Marks where the rare big wins begin.</td>
-            <td data-i18n="ruleMultMid3">Multiple of 0.1, Mid2 &lt; Mid3 &lt; Max</td>
-          </tr>
-          <tr>
-            <td data-i18n="labelMultMax">Max</td>
-            <td data-i18n="modalDescMultMax">The absolute maximum multiplier any spin can produce. The distribution is hard-capped at this value.</td>
-            <td data-i18n="ruleMultMax">Multiple of 0.1, &gt; Mid3</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-
-    <div class="modal-section">
-      <div class="modal-section-title" data-i18n="groupCrashExponentsShort">Crash Exponents</div>
-      <p style="font-size:0.83rem; color:#94a3b8; margin-bottom:0.75rem;" data-i18n-html="modalExpIntro">
-        Each exponent controls the steepness of the power-law distribution within its segment. Higher values make large multipliers rarer within that segment — the distribution crashes more steeply. Lower values flatten the curve, giving higher multipliers a better chance.
-        The inverse-CDF formula used is: <code style="color:var(--param-name)">x = boundaryLow / (1 − u)^(1/exponent)</code>.
+      <div class="modal-section-title" data-i18n="modalVolatilityTitle">Volatility Index — Explained</div>
+      <p style="font-size:0.83rem; color:var(--text-sub); margin-bottom:0.9rem;" data-i18n-html="modalVolatilityIntro">
+        The <strong style="color:var(--text)">Volatility Index</strong> is the ratio <code style="color:var(--param-name)">VI = P90 / P50</code> of the crash-point distribution.<br><br><strong style="color:var(--text)">P50 (median)</strong> — the crash point that exactly half of all rounds fall below.<br><strong style="color:var(--text)">P90</strong> — the crash point that 90% of rounds fall below; only the top 10% reach it or higher.<br><br>The ratio tells you how many times larger the rare big crashes are compared to the typical one. For pure Pareto, P50 ≈ 2× and P90 ≈ 10×, giving <strong style="color:var(--text)">VI ≈ 5.0</strong> — always Medium.
       </p>
       <table class="param-table">
-        <thead><tr><th data-i18n="modalColParam">Parameter</th><th data-i18n="modalColSegment">Segment</th><th data-i18n="modalColValidation">Validation</th></tr></thead>
+        <thead><tr><th data-i18n="modalColBand">Band</th><th data-i18n="modalColRange">VI Range</th><th data-i18n="modalColDesc">What it means</th></tr></thead>
         <tbody>
           <tr>
-            <td data-i18n="labelExpLowShort">Low</td>
-            <td data-i18n="modalDescExpLow">Min → Mid 1. Controls how quickly the density drops from the minimum. Exponent = 1.0 gives a pure Pareto (power-law) distribution in this segment.</td>
-            <td data-i18n="ruleExpGt0">&gt; 0</td>
+            <td><span class="volatility-badge vol-low" data-i18n="volLow">Low</span></td>
+            <td>&lt; 3.0</td>
+            <td data-i18n="modalDescVolLow">Tail barely wider than the median — P90 is less than 3× P50. Crash points cluster tightly; session results are predictable with modest swings.</td>
           </tr>
           <tr>
-            <td data-i18n="labelExpMidShort">Mid</td>
-            <td data-i18n="modalDescExpMid">Mid 1 → Mid 2. Steepness in the medium-value range. Higher values reduce the chance of hitting multipliers above Mid 1.</td>
-            <td data-i18n="ruleExpGt0">&gt; 0</td>
+            <td><span class="volatility-badge vol-medium" data-i18n="volMedium">Medium</span></td>
+            <td>3.0 – 6.0</td>
+            <td data-i18n="modalDescVolMedium">Moderate tail spread — P90 is 3–6× P50. Pure Pareto always lands here (VI ≈ 5.0): P50 ≈ 2×, P90 ≈ 10×. The expected outcome band for this simulator.</td>
           </tr>
           <tr>
-            <td data-i18n="labelExpUpperMidShort">Upper Mid</td>
-            <td data-i18n="modalDescExpUpperMid">Mid 2 → Mid 3. Controls probability of reaching the high-value zone. Typically set much higher than the low/mid exponents to make large wins rare.</td>
-            <td data-i18n="ruleExpGt0">&gt; 0</td>
+            <td><span class="volatility-badge vol-high" data-i18n="volHigh">High</span></td>
+            <td>6.0 – 12.0</td>
+            <td data-i18n="modalDescVolHigh">Wide tail spread — P90 is 6–12× P50. Long losing streaks are common, punctuated by infrequent large wins.</td>
           </tr>
           <tr>
-            <td data-i18n="labelExpHighShort">High</td>
-            <td data-i18n="modalDescExpHigh">Mid 3 → Max. Governs the extreme tail — the rarest, highest-paying outcomes. Usually the largest exponent in the config.</td>
-            <td data-i18n="ruleExpGt0">&gt; 0</td>
+            <td><span class="volatility-badge vol-extreme" data-i18n="volExtreme">Extreme</span></td>
+            <td>&gt; 12.0</td>
+            <td data-i18n="modalDescVolExtreme">Very wide tail — P90 is more than 12× P50. Outcomes are dominated by rare jackpot-scale crashes. Session RTP can deviate significantly from the theoretical value.</td>
           </tr>
         </tbody>
       </table>
+      <div class="algo-insight" style="margin-top:0.85rem;" data-i18n-html="modalVolatilityFormula">
+        <strong>Computation:</strong> Each worker thread runs Knuth reservoir sampling (100 k samples) to estimate P50 and P90. After merging N threads: <code>VI = mean(P90 threads) / mean(P50 threads)</code>. The ratio is insensitive to extreme outliers and to the overall mean level — it directly compares tail to centre of the distribution.
+      </div>
+    </div>
+
+    <div class="modal-section">
+      <div class="modal-section-title" data-i18n="modalDistTitle">Distribution Formula</div>
+      <p style="font-size:0.83rem; color:var(--text-sub); margin-bottom:0.9rem;" data-i18n-html="modalDistIntro">
+        Every crash point is sampled from a <strong style="color:var(--text)">pure Pareto</strong> distribution with survival function <code style="color:var(--param-name)">S(x) = P(crash ≥ x) = 1/x</code>. This is the unique distribution that guarantees exactly <strong style="color:var(--text)">100% theoretical RTP</strong> for every cash-out multiplier — because <code style="color:var(--param-name)">cashOut × S(cashOut) = cashOut × 1/cashOut = 1</code>.
+      </p>
+
+      <div class="algo-card">
+        <div class="algo-title" data-i18n="modalDistAlgoTitle">How a crash point is sampled (per spin)</div>
+        <div class="algo-steps">
+          <div class="algo-step">
+            <span class="algo-num">1</span>
+            <span data-i18n-html="modalDistStep1">Draw a uniform random number <code>u ∈ [0, 1)</code> from the thread-local RNG.</span>
+          </div>
+          <div class="algo-step">
+            <span class="algo-num">2</span>
+            <span data-i18n-html="modalDistStep2">Apply the inverse-CDF: <code>x = 1 / (1 − u)</code>.</span>
+          </div>
+          <div class="algo-step">
+            <span class="algo-num">3</span>
+            <span data-i18n-html="modalDistStep3">Cap the result at <code>Max Multiplier</code>. Return the crash point.</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="algo-insight" style="margin-top:0.85rem;" data-i18n-html="modalDistInsight">
+        <strong>Cost per spin:</strong> O(1) — one division + one min. <strong>Median:</strong> converges to 2.0×. <strong>Mean:</strong> converges to ln(Max). The cap reduces the theoretical mean but does not change the RTP — the win probability for any target <code>t</code> is exactly <code>1/t</code>, so <code>E[payout] = t × 1/t = 1.0</code> per unit staked.
+      </div>
     </div>
 
     <div class="modal-section">
@@ -984,94 +1263,106 @@
       themeLabelDark: 'Dark',
       configTitle: 'Configuration',
       groupSimulation: 'Simulation',
-      groupMultiplierRange: 'Multiplier Range',
-      groupCrashExponents: 'Crash Exponents (steepness per segment)',
-      groupCrashExponentsShort: 'Crash Exponents',
-      labelSpins: 'Spins',
-      tipSpins: 'Total number of individual bets simulated across all threads. Higher values = more stable RTP results.',
+      groupBet: 'Bet',
+      groupDistribution: 'Distribution',      labelSpins: 'Rounds',
+      tipSpins: 'Total number of crash rounds simulated across all threads. Higher values = more stable RTP results.',
       ruleSpins: '1 – 1,000,000,000',
       labelThreadCount: 'Thread Count',
-      tipThreadCount: 'Number of parallel worker threads. Spins are divided evenly (max ±1 difference). More threads = faster on multi-core CPUs.',
+      tipThreadCount: 'Number of parallel worker threads. Rounds are divided evenly (max ±1 difference). More threads = faster on multi-core CPUs.',
       ruleThreadCount: '1 – 8',
       labelStake: 'Stake',
-      tipStake: 'Fixed amount wagered per spin. Total staked = Stake × Spins. Payout = Stake × multiplier.',
+      tipStake: 'Fixed amount wagered per round. Win payout = Stake × Cash-out Multiplier. Loss = full stake lost.',
       ruleStake: '0.1 – 200.0, multiple of 0.1',
-      labelZeroSpin: 'Zero Spin Interval',
-      tipZeroSpin: 'Every Nth spin is forced to pay 0×. E.g. 36 = 1 in 36 spins always pays nothing. Set 0 to disable.',
-      ruleZeroSpin: '≥ 0 (0 = disabled)',
-      labelMultMin: 'Min',
-      tipMultMin: 'Lowest possible multiplier for any non-zero spin. Acts as the floor of the distribution.',
-      ruleMultMin: '> 0, multiple of 0.1, < Mid 1',
-      labelMultMid1: 'Mid 1 (seg 1→2)',
-      tipMultMid1: 'Boundary between segment 1 and 2. Multipliers up to this value use Crash Exponent Low; above it uses Crash Exponent Mid.',
-      ruleMultMid1: 'Multiple of 0.1, Min < Mid1 < Mid2',
-      labelMultMid2: 'Mid 2 (seg 2→3)',
-      tipMultMid2: 'Boundary between segment 2 and 3. The distribution transitions from mid steepness to upper-mid steepness here.',
-      ruleMultMid2: 'Multiple of 0.1, Mid1 < Mid2 < Mid3',
-      labelMultMid3: 'Mid 3 (seg 3→4)',
-      tipMultMid3: 'Boundary between segment 3 and the high-value tail. Marks where the rare big wins begin.',
-      ruleMultMid3: 'Multiple of 0.1, Mid2 < Mid3 < Max',
-      labelMultMax: 'Max',
-      tipMultMax: 'Absolute maximum multiplier any spin can produce. The distribution is hard-capped here.',
-      ruleMultMax: 'Multiple of 0.1, > Mid3',
-      labelExpLow: 'Low [min → mid 1]',
-      tipExpLow: 'Controls steepness of the power-law in the lowest segment. Exponent 1.0 = pure Pareto; higher values make values above Min rarer.',
-      labelExpMid: 'Mid [mid 1 → mid 2]',
-      tipExpMid: 'Steepness in the medium-value segment. Higher values reduce the probability of multipliers above Mid 1.',
-      labelExpUpperMid: 'Upper Mid [mid 2 → mid 3]',
-      tipExpUpperMid: 'Controls probability of reaching the high-value zone. Typically much larger than low/mid to make big wins rare.',
-      labelExpHigh: 'High [mid 3 → max]',
-      tipExpHigh: 'Governs the extreme tail — the rarest, highest-paying outcomes. Usually the largest exponent in the config.',
-      ruleExpGt0: '> 0',
+      labelCashOut: 'Cash-out Multiplier',
+      tipCashOut: 'Single mode: one fixed multiplier for every round. Win if crash point ≥ value; payout = Stake × multiplier. <span style="color:var(--accent)">e.g. 2.00x → win pays 2× stake</span>. · Strategy mode: define multiple targets with percentage weights summing to 100. Each round randomly picks a target using those weights. <span style="color:var(--accent)">e.g. weights <code>33.3, 33.3, 33.4</code> / multipliers <code>2.0, 3.5, 50.0</code> → equal chance for each target.</span> Payout = Stake × selected target.<div class="tip-rule"><b>Single:</b> 1.01 or more, in steps of 0.01, less than Max Multiplier<br><b>Strategy:</b> weights sum to 100, each &gt; 0 · multipliers same rules · min 2 entries</div>',
+      ruleCashOut: '≥ 1.01, ×0.01, < Max Multiplier · Strategy weights: each > 0, sum = 100 · ≥ 2 entries',
+      modeSingle: 'Single',
+      modeStrategy: 'Strategy',
+      labelStrategyWeights: 'Weights (sum = 100)',
+      labelStrategyMultipliers: 'Multipliers',
+      labelInstantCrash: 'Instant Crash Interval',
+      tipInstantCrash: 'Every Nth round crashes instantly at 1.0× — player always loses their stake. E.g. 44 = 1 in 44 rounds is forced. Set 0 to disable.',
+      ruleInstantCrash: '≥ 0 (0 = disabled)',
+      labelMultMax: 'Max Multiplier',
+      tipMultMax: 'The highest crash point any round can produce. The pure Pareto distribution is hard-capped at this value — higher cap = rarer jackpots, same 100% theoretical RTP.',
+      ruleMultMax: 'Default 5,000× · min 10 · max 100,000 · must be > cash-out',
+      modalDescMultMax: 'The absolute maximum crash point any round can produce. The pure Pareto distribution is hard-capped at this value — higher cap = rarer jackpots, same 100% theoretical RTP.',
+      modalDistTitle: 'Distribution Formula',
+      modalDistIntro: 'Every crash point is sampled from a <strong style="color:var(--text)">pure Pareto</strong> distribution: <code style="color:var(--param-name)">S(x) = 1/x</code>. Guarantees 100% theoretical RTP.',
+      modalDistAlgoTitle: 'How a crash point is sampled (per spin)',
+      modalDistStep1: 'Draw <code>u ∈ [0, 1)</code> from the thread-local RNG.',
+      modalDistStep2: 'Apply inverse-CDF: <code>x = 1 / (1 − u)</code>.',
+      modalDistStep3: 'Cap at <code>Max Multiplier</code>. Return crash point.',
+      modalDistStep4: '',
+      modalDistInsight: '<strong>Cost per spin:</strong> O(1) — one division + one min.',
+      histTitle: 'Crash Point Distribution',
+      histMedian: 'Median',
+      histAvg: 'Avg',
+      histTarget: 'Target',
+      histTooltipRounds: 'rounds',
       btnRun: 'Run Simulation',
       btnRunning: 'Running…',
       btnValidating: 'Validating…',
       btnRunAgain: 'Run Again',
       progressTitle: 'Thread Progress',
       colThread: 'Thread',
-      colSpins: 'Spins',
-      colHitRate: 'Hit Rate',
+      colSpins: 'Rounds',
       colWinRate: 'Win Rate',
-      colMaxMult: 'Max Mult',
-      colAvgMult: 'Avg Mult',
-      colMedianMult: 'Median Mult',
-      colTotalStaked: 'Total Staked',
+      colMaxMult: 'Max Crash',
+      colAvgMult: 'Avg Crash',
+      colMedianMult: 'Median Crash',
+      colStdDev: 'Std Dev',
+      colVolatility: 'Vol. Index',
       colTotalReturned: 'Total Returned',
       colRTP: 'RTP',
       resultsTitle: 'Global Results',
-      statTotalSpins: 'Total Spins',
-      statHitRate: 'Hit Rate',
+      statTotalSpins: 'Total Rounds',
       statWinRate: 'Win Rate',
-      statMaxMult: 'Max Multiplier',
-      statAvgMult: 'Avg Multiplier',
-      statMedianMult: 'Median Multiplier',
+      statCashOut: 'Cash-out Multiplier',
+      statMaxMult: 'Max Crash Point',
+      statAvgMult: 'Avg Crash Point',
+      statMedianMult: 'Median Crash Point',
+      statStdDev: 'Std Deviation',
+      statVolatility: 'Volatility Index',
       statTotalStaked: 'Total Staked',
       statTotalReturned: 'Total Returned',
       statRTP: 'RTP',
       statElapsed: 'Elapsed Time',
+      tipStatTotalSpins: 'Total number of crash rounds simulated across all threads.',
+      tipStatWinRate: 'Percentage of rounds where the crash point was ≥ the chosen cash-out multiplier. Theoretical: 1 / cashOut.',
+      tipStatCashOut: 'Single mode: the fixed multiplier used every round — shown as e.g. 2.00x. · Strategy mode: each pair shows weight%→multiplier (e.g. 55%→17x). Each round randomly picks one target using the configured weights. The weighted average multiplier is shown as a hover tooltip. Win payout = Stake × the selected target for that round.',
+      tipStatMaxMult: 'The single highest crash point observed across all rounds in this simulation run.',
+      tipStatAvgMult: 'Arithmetic mean of all crash points. For a pure Pareto distribution capped at Max, this converges to ln(Max).',
+      tipStatMedianMult: 'Estimated median crash point from Knuth reservoir sampling (100,000-sample reservoir per thread). Converges to 2.0× for a pure Pareto distribution.',
+      tipStatStdDev: 'Standard deviation of crash points: √(E[X²] − E[X]²). Measures the typical distance of crash points from the mean. High std dev = wide swings around the average.',
+      tipStatVolatility: 'P90 / P50 ratio of crash points. P50 (median) = the crash point half of all rounds fall below. P90 = the crash point 90% of rounds fall below. Pure Pareto always produces VI ≈ 5.0 (Medium). Scale: Low <3 · Medium 3–6 · High 6–12 · Extreme >12.',
+      tipStatTotalStaked: 'Sum of all stakes wagered across every round (Stake × Total Rounds).',
+      tipStatTotalReturned: 'Sum of all payouts on winning rounds (Wins × Stake × Cash-out Multiplier).',
+      tipStatRTP: 'Return to Player: Total Returned ÷ Total Staked × 100%. Theoretical 100% with no instant crashes (pure Pareto). Each 1-in-N instant crash reduces RTP by ≈1/N × 100%.',
+      tipStatElapsed: 'Wall-clock time from simulation start to last thread completing, including thread pool overhead.',
+      modalVolatilityTitle: 'Volatility Index — Explained',
+      modalVolatilityIntro: 'The <strong style="color:var(--text)">Volatility Index</strong> is the ratio <code style="color:var(--param-name)">VI = P90 / P50</code> of the crash-point distribution.<br><br><strong style="color:var(--text)">P50 (median)</strong> — the crash point that exactly half of all rounds fall below. If P50 = 2×, half of rounds crash before 2× and half crash at 2× or higher.<br><strong style="color:var(--text)">P90</strong> — the crash point that 90% of rounds fall below. Only the top 10% of rounds reach it or higher.<br><br>The ratio tells you how many times larger the rare big crashes are compared to the typical one. For pure Pareto, P50 ≈ 2× and P90 ≈ 10×, giving <strong style="color:var(--text)">VI ≈ 5.0</strong> — always Medium.',
+      modalColBand: 'Band',
+      modalColRange: 'VI Range',
+      volLow: 'Low',
+      volMedium: 'Medium',
+      volHigh: 'High',
+      volExtreme: 'Extreme',
+      modalDescVolLow: 'Tail barely wider than the median — P90 is less than 3× P50. Crash points cluster tightly; session results are predictable with modest swings.',
+      modalDescVolMedium: 'Moderate tail spread — P90 is 3–6× P50. Pure Pareto always lands here (VI ≈ 5.0): P50 ≈ 2×, P90 ≈ 10×. The expected outcome band for this simulator.',
+      modalDescVolHigh: 'Wide tail spread — P90 is 6–12× P50. Long losing streaks are common, punctuated by infrequent large wins.',
+      modalDescVolExtreme: 'Very wide tail — P90 is more than 12× P50. Outcomes are dominated by rare jackpot-scale crashes. Session RTP can deviate significantly from the theoretical value.',
+      modalVolatilityFormula: '<strong>Computation:</strong> Each worker thread runs Knuth reservoir sampling (100 k samples) to estimate P50 and P90. After merging N threads: <code>VI = mean(P90 threads) / mean(P50 threads)</code>. The ratio is insensitive to extreme outliers and to the overall mean level — it directly compares tail to centre of the distribution.',
       modalTitle: 'Parameter Reference',
       modalColParam: 'Parameter',
       modalColDesc: 'Description',
       modalColValidation: 'Validation',
       modalColSegment: 'Segment',
-      modalDescSpins: 'Total number of individual bets to simulate across all threads. Higher values produce more statistically stable RTP results.',
-      modalDescThreadCount: 'Number of parallel worker threads. Spins are divided evenly across threads (max difference of 1 spin between any two threads). More threads = faster on multi-core machines.',
-      modalDescStake: 'The fixed amount wagered per spin. Total staked = Stake × Spins. Payout per spin = Stake × multiplier.',
-      modalDescZeroSpin: 'Every Nth spin is forced to return a 0× multiplier (a dead spin). For example, interval=36 means 1 in 36 spins always pays nothing. Set to 0 to disable.',
-      modalDescMultMin: 'The lowest possible multiplier that a non-zero spin can produce. Acts as the floor of the distribution. Example: 0.1 means the worst live outcome pays back 10% of stake.',
-      modalDescMultMid1: 'Boundary between segment 1 and segment 2. Multipliers up to this value are governed by Crash Exponent Low. Beyond it, Crash Exponent Mid takes over.',
-      modalDescMultMid2: 'Boundary between segment 2 and segment 3. Marks where the distribution transitions from the mid steepness to the upper-mid steepness.',
-      modalDescMultMid3: 'Boundary between segment 3 and segment 4 (the high-value tail). Marks where the rare big wins begin.',
-      modalDescMultMax: 'The absolute maximum multiplier any spin can produce. The distribution is hard-capped at this value.',
-      modalExpIntro: 'Each exponent controls the steepness of the power-law distribution within its segment. Higher values make large multipliers rarer within that segment — the distribution crashes more steeply. Lower values flatten the curve, giving higher multipliers a better chance. The inverse-CDF formula used is: <code style="color:var(--param-name)">x = boundaryLow / (1 − u)^(1/exponent)</code>.',
-      labelExpLowShort: 'Low',
-      modalDescExpLow: 'Min → Mid 1. Controls how quickly the density drops from the minimum. Exponent = 1.0 gives a pure Pareto (power-law) distribution in this segment.',
-      labelExpMidShort: 'Mid',
-      modalDescExpMid: 'Mid 1 → Mid 2. Steepness in the medium-value range. Higher values reduce the chance of hitting multipliers above Mid 1.',
-      labelExpUpperMidShort: 'Upper Mid',
-      modalDescExpUpperMid: 'Mid 2 → Mid 3. Controls probability of reaching the high-value zone. Typically set much higher than the low/mid exponents to make large wins rare.',
-      labelExpHighShort: 'High',
-      modalDescExpHigh: 'Mid 3 → Max. Governs the extreme tail — the rarest, highest-paying outcomes. Usually the largest exponent in the config.',
+      modalDescSpins: 'Total number of crash rounds to simulate across all threads. Higher values produce more statistically stable RTP results.',
+      modalDescThreadCount: 'Number of parallel worker threads. Rounds are divided evenly across threads (max difference of 1 between any two threads). More threads = faster on multi-core machines.',
+      modalDescStake: 'The fixed amount wagered per round. Win payout = Stake × Cash-out Multiplier. On a loss, the full stake is lost.',
+      modalDescCashOut: 'The multiplier the player targets each round. <strong>Single mode:</strong> one fixed multiplier — win if crash point ≥ value; payout = Stake × multiplier. <strong>Strategy mode:</strong> define multiple multipliers with percentage weights (summing to 100). Each round randomly picks one target using those weights; payout = Stake × selected target. Must be ≥ 1.01 and &lt; Max Multiplier.',
+      modalDescInstantCrash: 'Every Nth round is a forced instant crash at 1.0× — the player always loses that stake. For example, interval=44 means 1 in 44 rounds is forced (≈ 2.3% RTP reduction). Set to 0 to disable.',
       modalReservoirTitle: 'Median Estimation — Knuth Reservoir Sampling',
       modalReservoirIntro: 'Computing an exact median requires sorting all values, which would mean storing every spin result in memory. For 500 000 000 spins × 8 bytes = <strong style="color:var(--text)">4 GB per thread</strong> — completely impractical. Instead, each thread maintains a fixed-size <em>reservoir</em> of <strong style="color:var(--text)">100 000</strong> randomly-chosen values and estimates the median from that sample. Error stays well under 0.1% regardless of input size.',
       algoTitle: 'Algorithm (per spin)',
@@ -1092,9 +1383,7 @@
       themeLabelDark: 'Тъмна',
       configTitle: 'Конфигурация',
       groupSimulation: 'Симулация',
-      groupMultiplierRange: 'Диапазон на множителя',
-      groupCrashExponents: 'Краш показатели (стръмност по сегмент)',
-      groupCrashExponentsShort: 'Краш показатели',
+      groupBet: 'Залог',
       labelSpins: 'Завъртания',
       tipSpins: 'Общ брой залози, симулирани от всички нишки. По-високите стойности дават по-стабилни RTP резултати.',
       ruleSpins: '1 – 1 000 000 000',
@@ -1104,33 +1393,24 @@
       labelStake: 'Залог',
       tipStake: 'Фиксирана сума за едно завъртане. Общ залог = Залог × Завъртания. Изплащане = Залог × множител.',
       ruleStake: '0.1 – 200.0, кратно на 0.1',
-      labelZeroSpin: 'Нулев интервал',
-      tipZeroSpin: 'Всяко N-то завъртане е принудено да върне 0×. Напр. 36 = 1 на 36 завъртания. 0 за изключване.',
-      ruleZeroSpin: '≥ 0 (0 = изключен)',
-      labelMultMin: 'Мин',
-      tipMultMin: 'Най-ниският възможен множител за ненулево завъртане. Долна граница на разпределението.',
-      ruleMultMin: '> 0, кратно на 0.1, < Ср 1',
-      labelMultMid1: 'Ср 1 (сег 1→2)',
-      tipMultMid1: 'Граница между сегмент 1 и 2. До тази стойност важи Краш показател Ниско; над нея – Средно.',
-      ruleMultMid1: 'Кратно на 0.1, Мин < Ср1 < Ср2',
-      labelMultMid2: 'Ср 2 (сег 2→3)',
-      tipMultMid2: 'Граница между сегмент 2 и 3. Разпределението преминава от средна стръмност към горно-средна.',
-      ruleMultMid2: 'Кратно на 0.1, Ср1 < Ср2 < Ср3',
-      labelMultMid3: 'Ср 3 (сег 3→4)',
-      tipMultMid3: 'Граница между сегмент 3 и високоценовата опашка. Тук започват редките големи печалби.',
-      ruleMultMid3: 'Кратно на 0.1, Ср2 < Ср3 < Макс',
+      modeSingle: 'Единичен',
+      modeStrategy: 'Стратегия',
+      labelStrategyWeights: 'Тегла (сума = 100)',
+      labelStrategyMultipliers: 'Множители',
+      labelCashOut: 'Множител за cash-out',
+      tipCashOut: 'Единичен режим: един фиксиран множител за всеки кръг — печалба ако краш точката ≥ стойността; изплащане = Залог × множител. Стратегия: дефинирайте множество цели с процентни тегла (сума 100). Всеки кръг избира случайно цел по теглата. Изплащане = Залог × избраната цел.',
+      ruleCashOut: '≥ 1.01, ×0.01, < Макс множ. · Тегла: всяко > 0, сума = 100 · ≥ 2 записа',
+      labelInstantCrash: 'Интервал на незабавен краш',
+      tipInstantCrash: 'Всеки N-ти кръг е принудителен незабавен краш при 1.0× — играчът винаги губи залога. Напр. 44 = всеки 44-ти кръг е принудителен. 0 за изключване.',
+      ruleInstantCrash: '≥ 0 (0 = изключен)',
       labelMultMax: 'Макс',
-      tipMultMax: 'Абсолютен максимален множител. Разпределението е твърдо ограничено до тази стойност.',
-      ruleMultMax: 'Кратно на 0.1, > Ср3',
-      labelExpLow: 'Ниско [мин → ср 1]',
-      tipExpLow: 'Стръмност в най-ниския сегмент. 1.0 = чисто Парето; по-високи стойности правят стойностите над Мин по-редки.',
-      labelExpMid: 'Средно [ср 1 → ср 2]',
-      tipExpMid: 'Стръмност в средния сегмент. По-високи стойности намаляват вероятността за множители над Ср 1.',
-      labelExpUpperMid: 'Горно средно [ср 2 → ср 3]',
-      tipExpUpperMid: 'Вероятност за достигане на зоната с висока стойност. Обикновено значително по-голямо от ниско/средно.',
-      labelExpHigh: 'Високо [ср 3 → макс]',
-      tipExpHigh: 'Управлява крайната опашка — най-редките, най-щедрите резултати. Обикновено най-големият показател.',
-      ruleExpGt0: '> 0',
+      tipMultMax: 'Най-високата краш-точка, която може да произведе всеки кръг. По-висок таван = по-редки джакпоти, но същият 100% теоретичен RTP.',
+      ruleMultMax: 'По подразбиране 5 000× · мин 10 · макс 100 000 · трябва да е > cash-out',
+      histTitle: 'Разпределение на краш-точките',
+      histMedian: 'Медиана',
+      histAvg: 'Сред.',
+      histTarget: 'Цел',
+      histTooltipRounds: 'залога',
       btnRun: 'Стартирай симулация',
       btnRunning: 'Изпълнява се…',
       btnValidating: 'Валидиране…',
@@ -1143,20 +1423,49 @@
       colMaxMult: 'Макс множ.',
       colAvgMult: 'Ср. множ.',
       colMedianMult: 'Медиана',
-      colTotalStaked: 'Общо заложено',
+      colStdDev: 'Ст. откл.',
+      colVolatility: 'Вол. индекс',
       colTotalReturned: 'Общо върнато',
       colRTP: 'RTP',
       resultsTitle: 'Общи резултати',
       statTotalSpins: 'Общо завъртания',
       statHitRate: 'Честота на попадение',
       statWinRate: 'Честота на печалба',
+      statCashOut: 'Множител за cash-out',
+      tipStatTotalSpins: 'Общ брой краш-кръгове, симулирани от всички нишки.',
+      tipStatWinRate: 'Процент кръгове, в които краш-точката е ≥ избрания множител. Теоретично: 1 / cashOut.',
+      tipStatCashOut: 'Единичен режим: фиксираният множител за всеки кръг. Стратегия: всяка двойка показва тегло%→множител. Изплащане = Залог × избраната цел.',
+      tipStatMaxMult: 'Единствената най-висока краш-точка, наблюдавана в цялата симулация.',
+      tipStatAvgMult: 'Средноаритметична стойност на всички краш-точки. За чисто Парето с ограничение Макс, клони към ln(Макс).',
+      tipStatMedianMult: 'Оценена медиана от резервоарно вземане на извадка по Кнут (100 000 проби на нишка). Клони към 2.0× при чисто Парето.',
+      tipStatStdDev: 'Стандартно отклонение на краш-точките: √(E[X²] − E[X]²). Висока стойност = широки колебания около средната.',
+      tipStatTotalStaked: 'Сума на всички залози за всеки кръг (Залог × Общо завъртания).',
+      tipStatTotalReturned: 'Сума на всички изплащания при печеливши кръгове.',
+      tipStatRTP: 'Връщане към играча: Общо върнато ÷ Общо заложено × 100%. Теоретично 100% без незабавни кризи. Всеки 1-от-N незабавен краш намалява RTP с ≈1/N × 100%.',
+      tipStatElapsed: 'Реалното изминало време от началото до завършването на последната нишка, включително режийните разходи.',
       statMaxMult: 'Макс множител',
       statAvgMult: 'Средно множител',
       statMedianMult: 'Медиана на множителя',
+      statStdDev: 'Стандартно отклонение',
+      statVolatility: 'Индекс на волатилност',
       statTotalStaked: 'Общо заложено',
       statTotalReturned: 'Общо върнато',
       statRTP: 'RTP',
       statElapsed: 'Изминало време',
+      volLow: 'Ниска',
+      volMedium: 'Средна',
+      volHigh: 'Висока',
+      volExtreme: 'Екстремна',
+      modalVolatilityTitle: 'Индекс на волатилност — обяснение',
+      tipStatVolatility: 'Отношение P90/P50 на краш-точките. P50 (медиана) = краш-точката, под която попадат половината от всички кръгове. P90 = краш-точката, под която попадат 90% от кръговете. Чистото Парето винаги дава VI ≈ 5.0 (Средна). Скала: Ниска <3 · Средна 3–6 · Висока 6–12 · Екстремна >12.',
+      modalVolatilityIntro: 'Индексът на волатилност е отношението <code style="color:var(--param-name)">VI = P90 / P50</code> на разпределението на краш-точките.<br><br><strong style="color:var(--text)">P50 (медиана)</strong> — краш-точката, под която попадат точно половината от всички кръгове. Ако P50 = 2×, половината от кръговете приключват преди 2×, а другата половина — на 2× или по-високо.<br><strong style="color:var(--text)">P90</strong> — краш-точката, под която попадат 90% от кръговете. Само 10% от кръговете я достигат или надхвърлят.<br><br>Отношението показва колко пъти по-големи са редките голями краш-точки спрямо типичната. За чисто Парето P50 ≈ 2× и P90 ≈ 10×, което дава <strong style="color:var(--text)">VI ≈ 5.0</strong> — винаги Средна.',
+      modalColBand: 'Диапазон',
+      modalColRange: 'VI стойности',
+      modalDescVolLow: 'Опашката е едва по-широка от медианата — P90 е под 3× P50. Краш-точките са тесни; резултатите от сесията са предсказуеми с умерени колебания.',
+      modalDescVolMedium: 'Умерено разпространение на опашката — P90 е 3–6× P50. Чистото Парето винаги попада тук (VI ≈ 5.0): P50 ≈ 2×, P90 ≈ 10×. Очакваният диапазон за този симулатор.',
+      modalDescVolHigh: 'Широко разпространение на опашката — P90 е 6–12× P50. Чести серии от загуби, прекъснати от рядко срещани големи печалби.',
+      modalDescVolExtreme: 'Много широка опашка — P90 е над 12× P50. Резултатите се доминират от редки краш-точки от мащаба на джакпот. RTP на сесията може значително да се отклони от теоретичната стойност.',
+      modalVolatilityFormula: '<strong>Изчисление:</strong> Всяка работна нишка изпълнява резервоарно вземане на извадка по Кнут (100 000 проби) за оценка на P50 и P90. След обединяване на N нишки: <code>VI = средно(P90 на нишките) / средно(P50 на нишките)</code>. Отношението е нечувствително към крайни извънредни стойности и към общото средно ниво — то директно сравнява опашката с центъра на разпределението.',
       modalTitle: 'Справочник с параметри',
       modalColParam: 'Параметър',
       modalColDesc: 'Описание',
@@ -1165,21 +1474,17 @@
       modalDescSpins: 'Общ брой залози, симулирани от всички нишки. По-високите стойности дават по-стабилни статистически RTP резултати.',
       modalDescThreadCount: 'Брой паралелни работни нишки. Завъртанията се разпределят равномерно (разлика макс. 1 между две нишки). Повече нишки = по-бързо на многоядрени машини.',
       modalDescStake: 'Фиксирана сума за едно завъртане. Общо заложено = Залог × Завъртания. Изплащане за завъртане = Залог × множител.',
-      modalDescZeroSpin: 'Всяко N-то завъртане принудително връща 0× (мъртво завъртане). Напр. интервал=36 означава 1 на 36 завъртания. 0 за изключване.',
-      modalDescMultMin: 'Най-ниският множител за ненулево завъртане. Долна граница на разпределението. Пример: 0.1 означава, че най-лошият резултат изплаща 10% от залога.',
-      modalDescMultMid1: 'Граница между сегмент 1 и 2. До тази стойност важи Краш показател Ниско; над нея – Средно.',
-      modalDescMultMid2: 'Граница между сегмент 2 и 3. Разпределението преминава от средна към горно-средна стръмност.',
-      modalDescMultMid3: 'Граница между сегмент 3 и 4 (високоценова опашка). Тук започват редките големи печалби.',
-      modalDescMultMax: 'Абсолютен максимален множител. Разпределението е твърдо ограничено до тази стойност.',
-      modalExpIntro: 'Всеки показател управлява стръмността на степенното разпределение в своя сегмент. По-високите стойности правят големите множители по-редки — разпределението „пада" по-стръмно. По-ниските изравняват кривата. Формулата за обратна CDF е: <code style="color:var(--param-name)">x = boundaryLow / (1 − u)^(1/exponent)</code>.',
-      labelExpLowShort: 'Ниско',
-      modalDescExpLow: 'Мин → Ср 1. Управлява скоростта на спадане на плътността от минимума. Показател 1.0 дава чисто Парето разпределение.',
-      labelExpMidShort: 'Средно',
-      modalDescExpMid: 'Ср 1 → Ср 2. Стръмност в средния диапазон. По-високи стойности намаляват вероятността за множители над Ср 1.',
-      labelExpUpperMidShort: 'Горно средно',
-      modalDescExpUpperMid: 'Ср 2 → Ср 3. Вероятност за достигане на зоната с висока стойност. Обикновено значително по-голямо от останалите.',
-      labelExpHighShort: 'Високо',
-      modalDescExpHigh: 'Ср 3 → Макс. Управлява крайната опашка — най-редките резултати. Обикновено най-голям показател.',
+      modalDescCashOut: 'Множителят, към който играчът се стреми. <strong>Единичен режим:</strong> фиксиран множител — печалба ако краш точката ≥ стойността; изплащане = Залог × множител. <strong>Стратегия:</strong> дефинирайте множество цели с процентни тегла (сума 100). Всеки кръг избира случайно цел по теглата. Трябва да е ≥ 1.01 и &lt; Макс множител.',
+      modalDescInstantCrash: 'Всеки N-ти кръг е принудително моментален краш при 1.0× — играчът винаги губи залога си. Напр. интервал=44 означава 1 на 44 кръга (≈ 2.3% намаление на RTP). 0 за изключване.',
+      modalDescMultMax: 'Най-високата краш-точка, която може да произведе всеки кръг. Използва чисто Парето (1/x) разпределение — P(краш ≥ x) = 1/x — гарантирайки 100% теоретичен RTP. По-висок таван = по-редки джакпоти, същият дългосрочен RTP.',
+      modalDistTitle: 'Формула на разпределението',
+      modalDistIntro: 'Всяка краш-точка се взима от <strong style="color:var(--text)">чисто Парето</strong> разпределение: <code style="color:var(--param-name)">S(x) = 1/x</code>. Гарантира 100% теоретичен RTP.',
+      modalDistAlgoTitle: 'Как се взима краш-точка (за едно завъртане)',
+      modalDistStep1: 'Вземи <code>u ∈ [0, 1)</code> от локалния за нишката генератор на случайни числа.',
+      modalDistStep2: 'Приложи обратна CDF: <code>x = 1 / (1 − u)</code>.',
+      modalDistStep3: 'Ограничи до <code>Макс множител</code>. Върни краш-точката.',
+      modalDistStep4: '',
+      modalDistInsight: '<strong>Цена на завъртане:</strong> O(1) — едно деление + едно min.',
       modalReservoirTitle: 'Оценка на медианата — Резервоарно вземане на извадка по Кнут',
       modalReservoirIntro: 'Точната медиана изисква сортиране на всички стойности — съхраняване на всеки резултат в паметта. При 500 000 000 завъртания × 8 байта = <strong style="color:var(--text)">4 GB на нишка</strong> — напълно непрактично. Вместо това всяка нишка поддържа резервоар с фиксиран размер от <strong style="color:var(--text)">100 000</strong> произволно избрани стойности и оценява медианата от тях. Грешката е под 0.1% независимо от размера на входа.',
       algoTitle: 'Алгоритъм (за едно завъртане)',
@@ -1200,9 +1505,7 @@
       themeLabelDark: 'Тёмная',
       configTitle: 'Конфигурация',
       groupSimulation: 'Симуляция',
-      groupMultiplierRange: 'Диапазон множителя',
-      groupCrashExponents: 'Краш-показатели (крутизна по сегменту)',
-      groupCrashExponentsShort: 'Краш-показатели',
+      groupBet: 'Ставка',
       labelSpins: 'Вращений',
       tipSpins: 'Общее число ставок, симулируемых всеми потоками. Большие значения дают более стабильные результаты RTP.',
       ruleSpins: '1 – 1 000 000 000',
@@ -1212,33 +1515,22 @@
       labelStake: 'Ставка',
       tipStake: 'Фиксированная сумма за одно вращение. Итого ставок = Ставка × Вращений. Выплата = Ставка × множитель.',
       ruleStake: '0.1 – 200.0, кратно 0.1',
-      labelZeroSpin: 'Нулевой интервал',
-      tipZeroSpin: 'Каждое N-е вращение принудительно даёт 0×. Напр. 36 = каждое 36-е. 0 — отключить.',
-      ruleZeroSpin: '≥ 0 (0 = отключено)',
-      labelMultMin: 'Мин',
-      tipMultMin: 'Минимально возможный множитель для ненулевого вращения. Нижняя граница распределения.',
-      ruleMultMin: '> 0, кратно 0.1, < Сред 1',
-      labelMultMid1: 'Сред 1 (сег 1→2)',
-      tipMultMid1: 'Граница между сегментами 1 и 2. До этого значения действует Краш-показатель Низкий; выше — Средний.',
-      ruleMultMid1: 'Кратно 0.1, Мин < Сред1 < Сред2',
-      labelMultMid2: 'Сред 2 (сег 2→3)',
-      tipMultMid2: 'Граница между сегментами 2 и 3. Распределение переходит от средней крутизны к верхне-средней.',
-      ruleMultMid2: 'Кратно 0.1, Сред1 < Сред2 < Сред3',
-      labelMultMid3: 'Сред 3 (сег 3→4)',
-      tipMultMid3: 'Граница между сегментом 3 и «хвостом» высоких значений. Здесь начинаются редкие крупные выигрыши.',
-      ruleMultMid3: 'Кратно 0.1, Сред2 < Сред3 < Макс',
+      modeSingle: 'Одиночный',
+      modeStrategy: 'Стратегия',
+      labelStrategyWeights: 'Веса (сумма = 100)',
+      labelStrategyMultipliers: 'Множители',
+      labelCashOut: 'Множитель cash-out',
+      tipCashOut: 'Одиночный режим: один фиксированный множитель — выигрыш если крэш-точка ≥ значению; выплата = Ставка × множитель. Стратегия: несколько целей с процентными весами (сумма 100). Каждый раунд случайно выбирает цель. Выплата = Ставка × выбранная цель.',
+      ruleCashOut: '≥ 1.01, ×0.01, < Макс множ. · Веса: каждый > 0, сумма = 100 · ≥ 2 записи',
+      labelInstantCrash: 'Интервал мгновенного крэша',
+      tipInstantCrash: 'Каждый N-й раунд — принудительный мгновенный крэш при 1.0× — игрок всегда теряет ставку. Напр. 44 = каждый 44-й раунд принудительный. 0 — отключить.',
+      ruleInstantCrash: '≥ 0 (0 = отключено)',
       labelMultMax: 'Макс',
-      tipMultMax: 'Абсолютный максимальный множитель. Распределение жёстко ограничено этим значением.',
-      ruleMultMax: 'Кратно 0.1, > Сред3',
-      labelExpLow: 'Низкий [мин → сред 1]',
-      tipExpLow: 'Крутизна в нижнем сегменте. 1.0 = чистое Парето; большие значения делают значения выше Мин более редкими.',
-      labelExpMid: 'Средний [сред 1 → сред 2]',
-      tipExpMid: 'Крутизна в среднем сегменте. Большие значения снижают вероятность множителей выше Сред 1.',
-      labelExpUpperMid: 'Верхне-средний [сред 2 → сред 3]',
-      tipExpUpperMid: 'Вероятность попасть в зону высоких значений. Обычно значительно больше низкого/среднего.',
-      labelExpHigh: 'Высокий [сред 3 → макс]',
-      tipExpHigh: 'Управляет крайним «хвостом» — самыми редкими, самыми щедрыми исходами. Обычно наибольший показатель.',
-      ruleExpGt0: '> 0',
+      histTitle: 'Распределение крэш-точек',
+      histMedian: 'Медиана',
+      histAvg: 'Среднее',
+      histTarget: 'Цель',
+      histTooltipRounds: 'ставок',
       btnRun: 'Запустить симуляцию',
       btnRunning: 'Выполняется…',
       btnValidating: 'Проверка…',
@@ -1251,20 +1543,49 @@
       colMaxMult: 'Макс множ.',
       colAvgMult: 'Ср. множ.',
       colMedianMult: 'Медиана',
-      colTotalStaked: 'Всего поставлено',
+      colStdDev: 'Ст. откл.',
+      colVolatility: 'Вол. индекс',
       colTotalReturned: 'Всего выплачено',
       colRTP: 'RTP',
       resultsTitle: 'Глобальные результаты',
       statTotalSpins: 'Всего вращений',
       statHitRate: 'Частота попаданий',
       statWinRate: 'Частота выигрышей',
+      statCashOut: 'Множитель cash-out',
+      tipStatTotalSpins: 'Общее число крэш-раундов, симулируемых всеми потоками.',
+      tipStatWinRate: 'Процент раундов, где крэш-точка ≥ выбранному множителю. Теоретически: 1 / cashOut.',
+      tipStatCashOut: 'Одиночный режим: фиксированный множитель для каждого раунда. Стратегия: каждая пара показывает вес%→множитель. Выплата = Ставка × выбранная цель.',
+      tipStatMaxMult: 'Единственная наибольшая крэш-точка за всю симуляцию.',
+      tipStatAvgMult: 'Среднеарифметическое всех крэш-точек. Для чистого Парето с ограничением Макс сходится к ln(Макс).',
+      tipStatMedianMult: 'Оценённая медиана из резервуарной выборки Кнута (100 000 на поток). Сходится к 2.0× для чистого Парето.',
+      tipStatStdDev: 'Стандартное отклонение крэш-точек: √(E[X²] − E[X]²). Высокое значение = широкие колебания вокруг среднего.',
+      tipStatTotalStaked: 'Сумма всех ставок за каждый раунд (Ставка × Всего вращений).',
+      tipStatTotalReturned: 'Сумма всех выплат в выигрышных раундах.',
+      tipStatRTP: 'Return to Player: Всего выплачено ÷ Всего поставлено × 100%. Теоретически 100% без мгновенных крэшей. Каждый 1-из-N крэш снижает RTP примерно на 1/N × 100%.',
+      tipStatElapsed: 'Реальное время от начала симуляции до завершения последнего потока, включая накладные расходы.',
       statMaxMult: 'Макс. множитель',
       statAvgMult: 'Ср. множитель',
       statMedianMult: 'Медиана множителя',
+      statStdDev: 'Стандартное отклонение',
+      statVolatility: 'Индекс волатильности',
       statTotalStaked: 'Всего поставлено',
       statTotalReturned: 'Всего выплачено',
       statRTP: 'RTP',
       statElapsed: 'Затраченное время',
+      volLow: 'Низкая',
+      volMedium: 'Средняя',
+      volHigh: 'Высокая',
+      volExtreme: 'Экстремальная',
+      modalVolatilityTitle: 'Индекс волатильности — пояснение',
+      tipStatVolatility: 'Отношение P90/P50 крэш-точек. P50 (медиана) = крэш-точка, ниже которой половина всех раундов. P90 = крэш-точка, ниже которой 90% раундов. Чистое Парето всегда даёт VI ≈ 5.0 (Средняя). Шкала: Низкая <3 · Средняя 3–6 · Высокая 6–12 · Экстремальная >12.',
+      modalVolatilityIntro: 'Индекс волатильности — отношение <code style="color:var(--param-name)">VI = P90 / P50</code> распределения крэш-точек.<br><br><strong style="color:var(--text)">P50 (медиана)</strong> — крэш-точка, ниже которой ровно половина всех раундов. Если P50 = 2×, половина раундов завершается до 2×, а другая половина — на 2× или выше.<br><strong style="color:var(--text)">P90</strong> — крэш-точка, ниже которой 90% раундов. Только 10% раундов её достигают или превышают.<br><br>Отношение показывает, во сколько раз редкие крупные крэши превосходят типичный. Для чистого Парето P50 ≈ 2× и P90 ≈ 10×, что даёт <strong style="color:var(--text)">VI ≈ 5.0</strong> — всегда Средняя.',
+      modalColBand: 'Диапазон',
+      modalColRange: 'VI значения',
+      modalDescVolLow: 'Хвост лишь немного шире медианы — P90 менее 3× P50. Крэш-точки кластеризуются плотно; результаты сессии предсказуемы с умеренными колебаниями.',
+      modalDescVolMedium: 'Умеренный разброс хвоста — P90 в 3–6× P50. Чистое Парето всегда попадает сюда (VI ≈ 5.0): P50 ≈ 2×, P90 ≈ 10×. Ожидаемый диапазон для этого симулятора.',
+      modalDescVolHigh: 'Широкий разброс хвоста — P90 в 6–12× P50. Частые серии проигрышей, перемежающиеся редкими крупными выигрышами.',
+      modalDescVolExtreme: 'Очень широкий хвост — P90 более 12× P50. Результаты определяются редкими крэшами джекпот-масштаба. RTP сессии может значительно отклоняться от теоретического значения.',
+      modalVolatilityFormula: '<strong>Вычисление:</strong> Каждый рабочий поток выполняет резервуарную выборку Кнута (100 000 образцов) для оценки P50 и P90. После объединения N потоков: <code>VI = среднее(P90 потоков) / среднее(P50 потоков)</code>. Отношение нечувствительно к крайним выбросам и к общему среднему уровню — оно напрямую сравнивает хвост с центром распределения.',
       modalTitle: 'Справочник параметров',
       modalColParam: 'Параметр',
       modalColDesc: 'Описание',
@@ -1273,21 +1594,17 @@
       modalDescSpins: 'Общее число ставок, симулируемых всеми потоками. Большие значения дают более стабильные статистические результаты RTP.',
       modalDescThreadCount: 'Количество параллельных рабочих потоков. Вращения распределяются равномерно (разница макс. 1 между потоками). Больше потоков = быстрее на многоядерных машинах.',
       modalDescStake: 'Фиксированная сумма за одно вращение. Итого ставок = Ставка × Вращений. Выплата за вращение = Ставка × множитель.',
-      modalDescZeroSpin: 'Каждое N-е вращение принудительно возвращает 0× (мёртвое вращение). Например, интервал=36 — каждое 36-е. 0 — отключить.',
-      modalDescMultMin: 'Минимально возможный множитель для ненулевого вращения. Нижняя граница распределения. Пример: 0.1 означает, что худший исход возвращает 10% ставки.',
-      modalDescMultMid1: 'Граница между сегментами 1 и 2. До этого значения действует Краш-показатель Низкий; выше — Средний.',
-      modalDescMultMid2: 'Граница между сегментами 2 и 3. Распределение переходит от средней крутизны к верхне-средней.',
-      modalDescMultMid3: 'Граница между сегментом 3 и 4 (высокий «хвост»). Здесь начинаются редкие крупные выигрыши.',
-      modalDescMultMax: 'Абсолютный максимальный множитель. Распределение жёстко ограничено этим значением.',
-      modalExpIntro: 'Каждый показатель управляет крутизной степенного распределения в своём сегменте. Большие значения делают крупные множители более редкими — распределение «падает» круче. Меньшие значения выравнивают кривую. Формула обратной CDF: <code style="color:var(--param-name)">x = boundaryLow / (1 − u)^(1/exponent)</code>.',
-      labelExpLowShort: 'Низкий',
-      modalDescExpLow: 'Мин → Сред 1. Управляет скоростью спада плотности от минимума. Показатель 1.0 — чистое Парето-распределение.',
-      labelExpMidShort: 'Средний',
-      modalDescExpMid: 'Сред 1 → Сред 2. Крутизна в среднем диапазоне. Большие значения снижают вероятность множителей выше Сред 1.',
-      labelExpUpperMidShort: 'Верхне-средний',
-      modalDescExpUpperMid: 'Сред 2 → Сред 3. Вероятность попасть в зону высоких значений. Обычно значительно больше остальных.',
-      labelExpHighShort: 'Высокий',
-      modalDescExpHigh: 'Сред 3 → Макс. Управляет крайним «хвостом» — самыми редкими исходами. Обычно наибольший показатель.',
+      modalDescCashOut: 'Множитель, на который нацелен игрок. <strong>Одиночный режим:</strong> фиксированный множитель — выигрыш если крэш-точка ≥ значению; выплата = Ставка × множитель. <strong>Стратегия:</strong> несколько целей с процентными весами (сумма 100). Каждый раунд случайно выбирает цель по весам. Должно быть ≥ 1.01 и &lt; Макс множитель.',
+      modalDescInstantCrash: 'Каждый N-й раунд — принудительный мгновенный крэш при 1.0× — игрок всегда теряет ставку. Напр. интервал=44 — каждый 44-й (≈ 2.3% снижения RTP). 0 — отключить.',
+      modalDescMultMax: 'Максимальная крэш-точка, которую может произвести любой раунд. Использует чистое распределение Парето (1/x) — P(крэш ≥ x) = 1/x — гарантируя 100% теоретического RTP. Более высокий потолок = более редкие джекпоты, тот же долгосрочный RTP.',
+      modalDistTitle: 'Формула распределения',
+      modalDistIntro: 'Каждая крэш-точка сэмплируется из <strong style="color:var(--text)">чистого Парето</strong>-распределения: <code style="color:var(--param-name)">S(x) = 1/x</code>. Гарантирует 100% теоретический RTP.',
+      modalDistAlgoTitle: 'Как сэмплируется крэш-точка (за одно вращение)',
+      modalDistStep1: 'Взять <code>u ∈ [0, 1)</code> из локального ГСЧ потока.',
+      modalDistStep2: 'Применить обратную CDF: <code>x = 1 / (1 − u)</code>.',
+      modalDistStep3: 'Ограничить значением <code>Макс Множитель</code>. Вернуть крэш-точку.',
+      modalDistStep4: '',
+      modalDistInsight: '<strong>Стоимость за вращение:</strong> O(1) — одно деление + одно min.',
       modalReservoirTitle: 'Оценка медианы — Резервуарная выборка Кнута',
       modalReservoirIntro: 'Точная медиана требует сортировки всех значений — хранения каждого результата в памяти. При 500 000 000 вращениях × 8 байт = <strong style="color:var(--text)">4 ГБ на поток</strong> — полностью непрактично. Вместо этого каждый поток поддерживает резервуар фиксированного размера из <strong style="color:var(--text)">100 000</strong> случайно выбранных значений и оценивает медиану по ним. Погрешность не превышает 0.1% независимо от размера входных данных.',
       algoTitle: 'Алгоритм (за одно вращение)',
@@ -1308,9 +1625,7 @@
       themeLabelDark: '深色',
       configTitle: '配置',
       groupSimulation: '模拟',
-      groupMultiplierRange: '倍数范围',
-      groupCrashExponents: '崩溃指数（各段陡度）',
-      groupCrashExponentsShort: '崩溃指数',
+      groupBet: '投注',
       labelSpins: '旋转次数',
       tipSpins: '所有线程模拟的总投注数。数值越高，RTP结果越稳定。',
       ruleSpins: '1 – 1,000,000,000',
@@ -1320,33 +1635,24 @@
       labelStake: '赌注',
       tipStake: '每次旋转的固定投注金额。总投注 = 赌注 × 旋转次数。赔付 = 赌注 × 倍数。',
       ruleStake: '0.1 – 200.0，0.1的倍数',
-      labelZeroSpin: '零旋转间隔',
-      tipZeroSpin: '每第N次旋转强制赔付0×。例如36 = 每36次必有一次零赔付。0表示禁用。',
-      ruleZeroSpin: '≥ 0（0 = 禁用）',
-      labelMultMin: '最小值',
-      tipMultMin: '非零旋转的最低可能倍数。分布的下限。',
-      ruleMultMin: '> 0，0.1的倍数，< 中间值1',
-      labelMultMid1: '中间1（段1→2）',
-      tipMultMid1: '段1和段2的分界。此值以下使用低崩溃指数，以上使用中崩溃指数。',
-      ruleMultMid1: '0.1的倍数，最小值 < 中1 < 中2',
-      labelMultMid2: '中间2（段2→3）',
-      tipMultMid2: '段2和段3的分界。分布从中等陡度过渡到上中陡度。',
-      ruleMultMid2: '0.1的倍数，中1 < 中2 < 中3',
-      labelMultMid3: '中间3（段3→4）',
-      tipMultMid3: '段3与高值尾部的分界。罕见大赢从这里开始。',
-      ruleMultMid3: '0.1的倍数，中2 < 中3 < 最大值',
+      modeSingle: '单一',
+      modeStrategy: '策略',
+      labelStrategyWeights: '权重（总和=100）',
+      labelStrategyMultipliers: '倍数',
+      labelCashOut: '兑现倍数',
+      tipCashOut: '单一模式：每轮固定倍数——崩溃点 ≥ 值即获胜；赔付 = 赌注 × 倍数。策略模式：定义多个目标并配以百分比权重（总和100）。每轮按权重随机选择目标。赔付 = 赌注 × 所选目标。',
+      ruleCashOut: '≥ 1.01，×0.01，< 最大倍数 · 权重：各 > 0，总和 = 100 · ≥ 2 条目',
+      labelInstantCrash: '即时崩溃间隔',
+      tipInstantCrash: '每第N轮强制即时崩溃于1.0×——玩家始终损失赌注。例如44 = 每第44轮强制崩溃。0表示禁用。',
+      ruleInstantCrash: '≥ 0（0 = 禁用）',
       labelMultMax: '最大值',
-      tipMultMax: '任意旋转能产生的绝对最大倍数。分布在此硬上限。',
-      ruleMultMax: '0.1的倍数，> 中3',
-      labelExpLow: '低段 [最小→中1]',
-      tipExpLow: '控制最低段的幂律陡度。指数1.0 = 纯帕累托；更高值使最小值以上更罕见。',
-      labelExpMid: '中段 [中1→中2]',
-      tipExpMid: '中值段的陡度。更高值降低超过中1的倍数概率。',
-      labelExpUpperMid: '上中段 [中2→中3]',
-      tipExpUpperMid: '控制进入高值区的概率。通常远大于低/中段，使大赢罕见。',
-      labelExpHigh: '高段 [中3→最大]',
-      tipExpHigh: '控制极端尾部——最罕见、赔付最高的结果。通常是配置中最大的指数。',
-      ruleExpGt0: '> 0',
+      tipMultMax: '任意旋转能产生的最高崩溃点。上限越高 = 大奖越罕见，但理论RTP相同（100%）。',
+      ruleMultMax: '默认 5,000× · 最小 10 · 最大 100,000 · 必须 > cash-out',
+      histTitle: '崩溃点分布',
+      histMedian: '中位数',
+      histAvg: '均值',
+      histTarget: '目标',
+      histTooltipRounds: '轮次',
       btnRun: '运行模拟',
       btnRunning: '运行中…',
       btnValidating: '验证中…',
@@ -1359,20 +1665,49 @@
       colMaxMult: '最大倍数',
       colAvgMult: '平均倍数',
       colMedianMult: '中位数',
-      colTotalStaked: '总投注',
+      colStdDev: '标准差',
+      colVolatility: '波动指数',
       colTotalReturned: '总返还',
       colRTP: 'RTP',
       resultsTitle: '全局结果',
       statTotalSpins: '总旋转次数',
       statHitRate: '命中率',
       statWinRate: '获胜率',
+      statCashOut: '兑现倍数',
+      tipStatTotalSpins: '所有线程模拟的崩溃轮次总数。',
+      tipStatWinRate: '崩溃点 ≥ 所选兑现倍数的轮次百分比。理论值：1 / cashOut。',
+      tipStatCashOut: '单一模式：每轮使用的固定倍数。策略模式：每对显示权重%→倍数。赔付 = 赌注 × 所选目标。',
+      tipStatMaxMult: '本次模拟所有轮次中观察到的单次最高崩溃点。',
+      tipStatAvgMult: '所有崩溃点的算术平均值。对于上限为最大值的纯帕累托，收敛于ln(最大值)。',
+      tipStatMedianMult: '通过Knuth水库抽样估算的中位数（每线程100,000样本）。对于纯帕累托收敛于2.0×。',
+      tipStatStdDev: '崩溃点标准差：√(E[X²] − E[X]²)。高标准差 = 均值附近波动大。',
+      tipStatTotalStaked: '所有轮次投注总和（赌注 × 总轮次）。',
+      tipStatTotalReturned: '获胜轮次的所有赔付总和。',
+      tipStatRTP: '返还率：总返还 ÷ 总投注 × 100%。无即时崩溃时理论值为100%。每1/N即时崩溃使RTP降低约1/N × 100%。',
+      tipStatElapsed: '从模拟开始到最后一个线程完成的实际时间，含线程池开销。',
       statMaxMult: '最大倍数',
       statAvgMult: '平均倍数',
       statMedianMult: '倍数中位数',
+      statStdDev: '标准差',
+      statVolatility: '波动指数',
       statTotalStaked: '总投注',
       statTotalReturned: '总返还',
       statRTP: 'RTP',
       statElapsed: '耗时',
+      volLow: '低',
+      volMedium: '中',
+      volHigh: '高',
+      volExtreme: '极端',
+      modalVolatilityTitle: '波动指数——说明',
+      tipStatVolatility: 'P90/P50崩溃点比值。P50（中位数）= 一半轮次崩溃点低于此值。P90 = 90%轮次崩溃点低于此值。纯帕累托始终产生VI ≈ 5.0（中）。刻度：低 <3 · 中 3–6 · 高 6–12 · 极端 >12。',
+      modalVolatilityIntro: '波动指数是崩溃点分布的比值 <code style="color:var(--param-name)">VI = P90 / P50</code>。<br><br><strong style="color:var(--text)">P50（中位数）</strong>——恰好一半轮次崩溃点低于此值。若P50 = 2×，则一半轮次在2×前崩溃，另一半在2×或更高处崩溃。<br><strong style="color:var(--text)">P90</strong>——90%轮次崩溃点低于此值。只有10%的轮次能达到或超过此值。<br><br>该比值表示罕见大崩溃是典型崩溃的多少倍。对于纯帕累托，P50 ≈ 2×，P90 ≈ 10×，给出<strong style="color:var(--text)">VI ≈ 5.0</strong>——始终为中。',
+      modalColBand: '等级',
+      modalColRange: 'VI范围',
+      modalDescVolLow: '尾部仅略宽于中位数——P90小于P50的3倍。崩溃点分布紧密；会话结果可预测，波动温和。',
+      modalDescVolMedium: '尾部扩展适中——P90为P50的3–6倍。纯帕累托始终落于此处（VI ≈ 5.0）：P50 ≈ 2×，P90 ≈ 10×。此模拟器的预期结果区间。',
+      modalDescVolHigh: '尾部扩展较宽——P90为P50的6–12倍。连续亏损轮次频繁，偶发罕见大赢。',
+      modalDescVolExtreme: '尾部极宽——P90超过P50的12倍。结果由杰克波特级别的罕见崩溃主导。会话RTP可能与理论值显著偏离。',
+      modalVolatilityFormula: '<strong>计算方式：</strong>每个工作线程运行Knuth水库抽样（100,000个样本）估算P50和P90。合并N个线程后：<code>VI = 均值(各线程P90) / 均值(各线程P50)</code>。该比值对极端异常值和整体均值水平不敏感——直接比较分布的尾部与中心。',
       modalTitle: '参数参考',
       modalColParam: '参数',
       modalColDesc: '说明',
@@ -1381,21 +1716,17 @@
       modalDescSpins: '所有线程模拟的总投注数。数值越高，统计RTP结果越稳定。',
       modalDescThreadCount: '并行工作线程数。旋转次数均匀分配（任意两线程最多相差1）。多核机器上线程越多越快。',
       modalDescStake: '每次旋转的固定投注金额。总投注 = 赌注 × 旋转次数。每次旋转赔付 = 赌注 × 倍数。',
-      modalDescZeroSpin: '每第N次旋转强制返回0×倍数（死旋转）。例如间隔=36表示每36次中有1次零赔付。0表示禁用。',
-      modalDescMultMin: '非零旋转的最低可能倍数。分布的下限。示例：0.1表示最差结果返还赌注的10%。',
-      modalDescMultMid1: '段1和段2的分界。此值以下由低崩溃指数控制；以上由中崩溃指数接管。',
-      modalDescMultMid2: '段2和段3的分界。分布从中等陡度过渡到上中陡度。',
-      modalDescMultMid3: '段3和段4（高值尾部）的分界。罕见大赢从这里开始。',
-      modalDescMultMax: '任意旋转能产生的绝对最大倍数。分布在此值硬上限。',
-      modalExpIntro: '每个指数控制其段内幂律分布的陡度。更高值使大倍数更罕见——分布崩溃更陡。更低值使曲线更平坦。使用的逆CDF公式为：<code style="color:var(--param-name)">x = boundaryLow / (1 − u)^(1/exponent)</code>。',
-      labelExpLowShort: '低段',
-      modalDescExpLow: '最小值→中1。控制密度从最小值下降的速度。指数=1.0在此段给出纯帕累托（幂律）分布。',
-      labelExpMidShort: '中段',
-      modalDescExpMid: '中1→中2。中值范围的陡度。更高值降低超过中1的倍数机会。',
-      labelExpUpperMidShort: '上中段',
-      modalDescExpUpperMid: '中2→中3。控制进入高值区的概率。通常远高于低/中指数，使大赢罕见。',
-      labelExpHighShort: '高段',
-      modalDescExpHigh: '中3→最大值。控制极端尾部——最罕见的结果。通常是配置中最大的指数。',
+      modalDescCashOut: '玩家每轮目标倍数。<strong>单一模式：</strong>固定倍数——崩溃点 ≥ 值即获胜；赔付 = 赌注 × 倍数。<strong>策略模式：</strong>定义多个目标并配以百分比权重（总和100）。每轮按权重随机选择目标，赔付 = 赌注 × 所选目标。必须 ≥ 1.01 且 &lt; 最大倍数。',
+      modalDescInstantCrash: '每第N轮强制即时崩溃于1.0×——玩家始终损失赌注。例如间隔=44表示每44轮强制一次（≈降低2.3% RTP）。0表示禁用。',
+      modalDescMultMax: '任意旋转能产生的最高崩溃点。使用纯帕累托（1/x）分布——P(崩溃 ≥ x) = 1/x——无即时崩溃时保证100%理论RTP。上限越高 = 大奖越罕见，长期RTP不变。',
+      modalDistTitle: '分布公式',
+      modalDistIntro: '每个崩溃点从<strong style="color:var(--text)">纯帕累托</strong>分布中抽样：<code style="color:var(--param-name)">S(x) = 1/x</code>。保证100%理论RTP。',
+      modalDistAlgoTitle: '崩溃点抽样方式（每次旋转）',
+      modalDistStep1: '从线程本地RNG中抽取 <code>u ∈ [0, 1)</code>。',
+      modalDistStep2: '应用逆CDF：<code>x = 1 / (1 − u)</code>。',
+      modalDistStep3: '截断至 <code>最大倍数</code>。返回崩溃点。',
+      modalDistStep4: '',
+      modalDistInsight: '<strong>每次旋转开销：</strong>O(1)——一次除法 + 一次min。',
       modalReservoirTitle: '中位数估算——Knuth水库抽样',
       modalReservoirIntro: '精确中位数需要对所有值排序——意味着在内存中存储每个旋转结果。对于5亿次旋转 × 8字节 = <strong style="color:var(--text)">每线程4 GB</strong>——完全不切实际。每个线程维护一个固定大小<strong style="color:var(--text)">100,000</strong>个随机选择值的水库，并从该样本中估算中位数。无论输入大小，误差均低于0.1%。',
       algoTitle: '算法（每次旋转）',
@@ -1470,7 +1801,10 @@
   });
 
   document.addEventListener('keydown', e => {
-    if (e.key === 'Escape') langDropdown.classList.remove('open');
+    if (e.key === 'Escape') {
+      langDropdown.classList.remove('open');
+      document.getElementById('infoModal').classList.remove('open');
+    }
   });
   // ────────────────────────────────────────────────────────────────
 
@@ -1571,6 +1905,20 @@
   function v(id) { return parseFloat(document.getElementById(id)?.value) || 0; }
   function vi(id) { return parseInt(document.getElementById(id)?.value, 10) || 0; }
   function div01(n) { return Math.abs(Math.round(n * 10) - n * 10) < 1e-6; }
+  function div001(n) { return Math.abs(Math.round(n * 100) - n * 100) < 1e-4; }
+
+  function setCashOutMode(mode) {
+    const isSingle = mode === 'single';
+    document.getElementById('cashout-single').style.display = isSingle ? '' : 'none';
+    document.getElementById('cashout-strategy').style.display = isSingle ? 'none' : '';
+    document.getElementById('f-cashOutMultiplier').disabled = !isSingle;
+    document.getElementById('f-cashOutMultiplierHidden').disabled = isSingle;
+    document.getElementById('f-strategyWeights').disabled = isSingle;
+    document.getElementById('f-strategyMultipliers').disabled = isSingle;
+    document.getElementById('btn-mode-single').classList.toggle('mode-btn-active', isSingle);
+    document.getElementById('btn-mode-strategy').classList.toggle('mode-btn-active', !isSingle);
+  }
+  setCashOutMode('single');
 
   function clientValidate() {
     const errors = [];
@@ -1578,7 +1926,7 @@
 
     const spins = parseInt(spinsInput.value.replace(/,/g, ''), 10);
     if (isNaN(spins) || spins < 1 || spins > 1_000_000_000) {
-      errors.push('Spins must be between 1 and 1,000,000,000.');
+      errors.push('Rounds must be between 1 and 1,000,000,000.');
       invalid.add('spinsDisplay');
     }
 
@@ -1589,26 +1937,42 @@
     if (stake <= 0 || stake > 200) { errors.push('Stake must be between 0.1 and 200.0.'); invalid.add('f-stake'); }
     else if (!div01(stake)) { errors.push('Stake must be divisible by 0.1.'); invalid.add('f-stake'); }
 
-    const zsi = vi('f-zeroSpinInterval');
-    if (zsi < 0) { errors.push('Zero spin interval must be 0 or greater.'); invalid.add('f-zeroSpinInterval'); }
-
-    const mn = v('f-multiplierMin'), m1 = v('f-multiplierMid1'), m2 = v('f-multiplierMid2'),
-          m3 = v('f-multiplierMid3'), mx = v('f-multiplierMax');
-
-    if (!div01(mn)) { errors.push('Multiplier Min must be divisible by 0.1.'); invalid.add('f-multiplierMin'); }
-    if (!div01(m1)) { errors.push('Multiplier Mid 1 must be divisible by 0.1.'); invalid.add('f-multiplierMid1'); }
-    if (!div01(m2)) { errors.push('Multiplier Mid 2 must be divisible by 0.1.'); invalid.add('f-multiplierMid2'); }
-    if (!div01(m3)) { errors.push('Multiplier Mid 3 must be divisible by 0.1.'); invalid.add('f-multiplierMid3'); }
-    if (!div01(mx)) { errors.push('Multiplier Max must be divisible by 0.1.'); invalid.add('f-multiplierMax'); }
-
-    if (!(mn < m1 && m1 < m2 && m2 < m3 && m3 < mx)) {
-      errors.push('Multiplier boundaries must satisfy: Min < Mid1 < Mid2 < Mid3 < Max.');
-      ['f-multiplierMin','f-multiplierMid1','f-multiplierMid2','f-multiplierMid3','f-multiplierMax'].forEach(id => invalid.add(id));
+    const isStrategy = document.getElementById('cashout-strategy').style.display !== 'none';
+    let cashOut = 0;
+    if (isStrategy) {
+      const wRaw = document.getElementById('f-strategyWeights').value.trim();
+      const mRaw = document.getElementById('f-strategyMultipliers').value.trim();
+      if (!wRaw) { errors.push('Strategy weights are required.'); invalid.add('f-strategyWeights'); }
+      if (!mRaw) { errors.push('Strategy multipliers are required.'); invalid.add('f-strategyMultipliers'); }
+      if (wRaw && mRaw) {
+        const ws = wRaw.split(',').map(s => parseFloat(s.trim()));
+        const ms = mRaw.split(',').map(s => parseFloat(s.trim().replace('x','')));
+        if (ws.length < 2) { errors.push('Strategy requires at least 2 entries.'); invalid.add('f-strategyWeights'); }
+        else if (ws.length !== ms.length) { errors.push('Strategy weights and multipliers must have the same number of entries.'); invalid.add('f-strategyWeights'); }
+        else {
+          let wSum = 0, maxM = 0;
+          for (let i = 0; i < ws.length; i++) {
+            if (isNaN(ws[i]) || ws[i] <= 0) errors.push('Weight at position ' + (i+1) + ' must be a positive number.');
+            if (isNaN(ms[i]) || ms[i] < 1.01) errors.push('Multiplier at position ' + (i+1) + ' must be at least 1.01.');
+            wSum += ws[i]; if (ms[i] > maxM) maxM = ms[i];
+          }
+          if (Math.abs(wSum - 100) > 0.001) errors.push('Strategy weights must sum to 100 (currently ' + wSum.toFixed(4) + ').');
+          cashOut = maxM;
+        }
+      }
+    } else {
+      cashOut = v('f-cashOutMultiplier');
+      if (cashOut < 1.01) { errors.push('Cash-out multiplier must be at least 1.01.'); invalid.add('f-cashOutMultiplier'); }
+      else if (!div001(cashOut)) { errors.push('Cash-out multiplier must be divisible by 0.01.'); invalid.add('f-cashOutMultiplier'); }
     }
 
-    ['f-crashExponentLow','f-crashExponentMid','f-crashExponentUpperMid','f-crashExponentHigh'].forEach(id => {
-      if (v(id) <= 0) { errors.push(`${document.querySelector(`#${id}`)?.closest('.field')?.querySelector('label')?.textContent ?? id} must be > 0.`); invalid.add(id); }
-    });
+    const ici = vi('f-instantCrashInterval');
+    if (ici < 0) { errors.push('Instant crash interval must be 0 or greater.'); invalid.add('f-instantCrashInterval'); }
+
+    const mx = v('f-multiplierMax');
+    if (mx < 10 || mx > 100_000) { errors.push('Max multiplier must be between 10 and 100,000.'); invalid.add('f-multiplierMax'); }
+    else if (!div01(mx)) { errors.push('Max multiplier must be divisible by 0.1.'); invalid.add('f-multiplierMax'); }
+    else if (mx <= cashOut) { errors.push('Max multiplier must be greater than cash-out multiplier.'); invalid.add('f-multiplierMax'); }
 
     // apply / clear invalid styling
     document.querySelectorAll('.field input').forEach(el => el.classList.remove('invalid'));
@@ -1653,6 +2017,7 @@
         threadBody.innerHTML = '';
         document.getElementById('section-progress').style.display = 'block';
         document.getElementById('section-results').style.display = 'none';
+        document.getElementById('section-histogram').style.display = 'none';
         btnLabel.textContent = TRANSLATIONS[currentLang].btnRunning;
 
         activeSource = new EventSource('/simulate/stream?' + params);
@@ -1660,16 +2025,19 @@
         activeSource.addEventListener('thread', ev => {
           const r = JSON.parse(ev.data);
           const rtp = (r.totalReturned / r.totalStaked * 100).toFixed(2);
+          const threadStdDev = Math.sqrt(Math.max(0, r.sumSquaredCrash / r.spins - r.avgCrashMultiplier * r.avgCrashMultiplier));
+          const threadVI = r.avgCrashMultiplier > 0 ? (threadStdDev / r.avgCrashMultiplier).toFixed(4) : '—';
           const row = document.createElement('tr');
           row.className = 'thread-row';
           row.innerHTML = `
             <td>T${r.threadId}</td>
             <td>${fmt(r.spins)}</td>
-            <td>${(r.hitRate * 100 / r.spins).toFixed(2)}%</td>
             <td>${(r.wins * 100 / r.spins).toFixed(2)}%</td>
-            <td>${r.maxMultiplier.toFixed(1)}</td>
-            <td>${r.avgMultiplier.toFixed(4)}</td>
-            <td>${r.medianMultiplier.toFixed(1)}</td>
+            <td>${r.maxMultiplier.toFixed(1)}x</td>
+            <td>${r.avgCrashMultiplier.toFixed(4)}x</td>
+            <td>${r.medianCrashMultiplier.toFixed(1)}x</td>
+            <td>${threadStdDev.toFixed(4)}</td>
+            <td>${threadVI}</td>
             <td>${fmt2(r.totalStaked)}</td>
             <td>${fmt2(r.totalReturned)}</td>
             <td>${rtp}%</td>
@@ -1679,17 +2047,44 @@
 
         activeSource.addEventListener('complete', ev => {
           const g = JSON.parse(ev.data);
-          document.getElementById('r-spins').textContent = fmt(g.totalSpins);
-          document.getElementById('r-hitRate').textContent = g.hitRatePct.toFixed(2) + '%';
+          document.getElementById('r-spins').textContent = fmt(g.totalRounds);
           document.getElementById('r-winRate').textContent = g.winRatePct.toFixed(2) + '%';
-          document.getElementById('r-maxMult').textContent = g.maxMultiplier.toFixed(1) + 'x';
-          document.getElementById('r-avgMult').textContent = g.avgMultiplier.toFixed(4);
-          document.getElementById('r-medianMult').textContent = g.medianMultiplier.toFixed(1);
+          if (g.strategyWeights && g.strategyWeights.length > 0) {
+            const ws = g.strategyWeights.split(',').map(s => s.trim());
+            const ms = g.strategyMultipliers.split(',').map(s => s.trim());
+            const pairs = ws.map((w, i) => `${w}%→${ms[i]}x`).join('\n');
+            const el = document.getElementById('r-cashOut');
+            el.style.whiteSpace = 'pre-line';
+            el.style.fontSize = '0.82rem';
+            el.textContent = pairs;
+            el.title = 'Weighted avg: ' + g.cashOutMultiplier.toFixed(2) + 'x';
+          } else {
+            const el = document.getElementById('r-cashOut');
+            el.style.whiteSpace = '';
+            el.style.fontSize = '';
+            el.textContent = g.cashOutMultiplier.toFixed(2) + 'x';
+            el.title = '';
+          }
+          document.getElementById('r-maxMult').textContent = g.maxCrashMultiplier.toFixed(1) + 'x';
+          document.getElementById('r-avgMult').textContent = g.avgCrashMultiplier.toFixed(4) + 'x';
+          document.getElementById('r-medianMult').textContent = g.medianCrashMultiplier.toFixed(4) + 'x';
+          document.getElementById('r-stddev').textContent = g.stdDev.toFixed(4);
+          const volLabel = g.volatilityLabel;
+          const volClassMap = { 'Low': 'vol-low', 'Medium': 'vol-medium', 'High': 'vol-high', 'Extreme': 'vol-extreme' };
+          const volClass = volClassMap[volLabel] || 'vol-low';
+          const volText = TRANSLATIONS[currentLang]['vol' + volLabel.replace(/ /g, '')] || volLabel;
+          document.getElementById('r-volatility').innerHTML =
+            g.volatilityIndex.toFixed(4) +
+            ' <span class="volatility-badge ' + volClass + '">' + volText + '</span>';
           document.getElementById('r-staked').textContent = fmt2(g.totalStaked);
           document.getElementById('r-returned').textContent = fmt2(g.totalReturned);
           document.getElementById('r-rtp').textContent = g.rtp.toFixed(4) + '%';
           document.getElementById('r-elapsed').textContent = formatMs(g.elapsedMs);
           document.getElementById('section-results').style.display = 'block';
+
+          if (g.histogramCounts && g.histogramEdges) {
+            renderHistogram(g.histogramCounts, g.histogramEdges, g.medianCrashMultiplier, g.cashOutMultiplier, g.avgCrashMultiplier);
+          }
 
           activeSource.close();
           runBtn.disabled = false;
@@ -1735,6 +2130,171 @@
     const sec = Math.floor((ms % 60000) / 1000);
     const rem = ms % 1000;
     return `${min}m ${sec}s ${rem}ms`;
+  }
+
+  // ── Histogram chart ──────────────────────────────────────────────────────
+  function renderHistogram(counts, edges, median, cashOut, avg) {
+    const section = document.getElementById('section-histogram');
+    const canvas  = document.getElementById('histCanvas');
+    const xLabels = document.getElementById('hist-x-labels');
+    section.style.display = 'block';
+
+    const dpr = window.devicePixelRatio || 1;
+    const W = canvas.offsetWidth || canvas.parentElement.offsetWidth;
+    const H = 220;
+    canvas.width  = W * dpr;
+    canvas.height = H * dpr;
+    canvas.style.width  = W + 'px';
+    canvas.style.height = H + 'px';
+
+    const ctx = canvas.getContext('2d');
+    ctx.scale(dpr, dpr);
+
+    const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+    const barColor    = isDark ? '#818cf8' : '#6366f1';
+    const barHover    = isDark ? '#a5b4fc' : '#4f46e5';
+    const gridColor   = isDark ? 'rgba(255,255,255,0.07)' : 'rgba(0,0,0,0.07)';
+    const textColor   = isDark ? '#94a3b8' : '#64748b';
+    const markerColor = isDark ? '#f59e0b' : '#d97706';
+    const cashColor   = isDark ? '#34d399' : '#059669';
+    const avgColor    = isDark ? '#f472b6' : '#db2777';
+
+    const pad = { top: 12, right: 8, bottom: 4, left: 48 };
+    const chartW = W - pad.left - pad.right;
+    const chartH = H - pad.top - pad.bottom;
+    const n = counts.length;
+
+    const maxCount = Math.max(...counts);
+
+    // y-axis grid lines
+    const yTicks = 4;
+    ctx.font = '10px system-ui, sans-serif';
+    ctx.fillStyle = textColor;
+    ctx.textAlign = 'right';
+    for (let t = 0; t <= yTicks; t++) {
+      const y = pad.top + chartH - (t / yTicks) * chartH;
+      const val = (t / yTicks) * maxCount;
+      ctx.strokeStyle = gridColor;
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(pad.left, y);
+      ctx.lineTo(pad.left + chartW, y);
+      ctx.stroke();
+      const label = val >= 1e9 ? (val/1e9).toFixed(1)+'B'
+                  : val >= 1e6 ? (val/1e6).toFixed(1)+'M'
+                  : val >= 1e3 ? (val/1e3).toFixed(0)+'K'
+                  : val.toFixed(0);
+      ctx.fillText(label, pad.left - 4, y + 3.5);
+    }
+
+    // bars
+    const barW = chartW / n;
+    const rects = [];
+    for (let i = 0; i < n; i++) {
+      const bh = maxCount > 0 ? (counts[i] / maxCount) * chartH : 0;
+      const x = pad.left + i * barW;
+      const y = pad.top + chartH - bh;
+      ctx.fillStyle = barColor;
+      ctx.beginPath();
+      ctx.roundRect(x + 1, y, barW - 2, bh, [2, 2, 0, 0]);
+      ctx.fill();
+      rects.push({ x, y, w: barW, h: bh, count: counts[i], lo: edges[i], hi: edges[i+1] });
+    }
+
+    // median marker
+    function xForMultiplier(m) {
+      const logMax = Math.log(edges[edges.length - 1]);
+      return pad.left + (Math.log(Math.max(m, 1)) / logMax) * chartW;
+    }
+    // draws a vertical dashed line with a horizontal label tag beside it at mid-chart height
+    function drawMarker(m, color, label, slot) {
+      const mx = xForMultiplier(m);
+      if (mx < pad.left || mx > pad.left + chartW) return;
+      ctx.strokeStyle = color;
+      ctx.lineWidth = 1.5;
+      ctx.setLineDash([4, 3]);
+      ctx.beginPath();
+      ctx.moveTo(mx, pad.top);
+      ctx.lineTo(mx, pad.top + chartH);
+      ctx.stroke();
+      ctx.setLineDash([]);
+      // label: pill sitting on the line at a fixed vertical slot (0=top,1=middle,2=lower)
+      const labelYCenter = pad.top + 14 + slot * 16;
+      ctx.font = 'bold 10px system-ui, sans-serif';
+      const labelW = ctx.measureText(label).width + 8;
+      const labelH = 14;
+      const onRight = mx + labelW / 2 + 6 <= pad.left + chartW;
+      const lx = onRight ? mx + 4 : mx - 4 - labelW;
+      const ly = labelYCenter - labelH / 2;
+      ctx.fillStyle = color + '28'; // translucent bg
+      ctx.beginPath();
+      ctx.roundRect(lx, ly, labelW, labelH, 3);
+      ctx.fill();
+      ctx.fillStyle = color;
+      ctx.textAlign = 'left';
+      ctx.fillText(label, lx + 4, ly + labelH - 3.5);
+    }
+    const t = TRANSLATIONS[currentLang];
+    drawMarker(median,  markerColor, (t.histMedian || 'Median') + ' ' + median.toFixed(2) + '×',  0);
+    drawMarker(avg,     avgColor,    (t.histAvg    || 'Avg')    + ' ' + (avg   ||0).toFixed(2) + '×', 1);
+    drawMarker(cashOut, cashColor,   (t.histTarget || 'Target') + ' ' + cashOut.toFixed(2) + '×', 2);
+
+    // x-axis labels (show ~6 evenly spaced edge values)
+    xLabels.innerHTML = '';
+    const labelIndices = [0, Math.floor(n/5), Math.floor(2*n/5), Math.floor(3*n/5), Math.floor(4*n/5), n];
+    labelIndices.forEach(i => {
+      const val = edges[Math.min(i, edges.length - 1)];
+      const span = document.createElement('span');
+      span.textContent = val >= 1000 ? (val/1000).toFixed(1)+'K×' : val.toFixed(val < 10 ? 2 : 0) + '×';
+      xLabels.appendChild(span);
+    });
+
+    // tooltip on hover
+    let tooltip = document.querySelector('.hist-bar-tooltip');
+    if (!tooltip) {
+      tooltip = document.createElement('div');
+      tooltip.className = 'hist-bar-tooltip';
+      document.getElementById('histogram-wrap').appendChild(tooltip);
+    }
+
+    canvas.onmousemove = (e) => {
+      const rect = canvas.getBoundingClientRect();
+      const mx = e.clientX - rect.left;
+      const my = e.clientY - rect.top;
+      let hit = null;
+      for (const r of rects) {
+        if (mx >= r.x && mx <= r.x + r.w && my >= pad.top && my <= pad.top + chartH) { hit = r; break; }
+      }
+      if (hit) {
+        const tl = TRANSLATIONS[currentLang];
+        const lo = hit.lo < 10 ? hit.lo.toFixed(2) : hit.lo.toFixed(1);
+        const hi = hit.hi < 10 ? hit.hi.toFixed(2) : hit.hi.toFixed(1);
+        const pct = maxCount > 0 ? (hit.count / counts.reduce((a,b)=>a+b,0) * 100).toFixed(2) : '0.00';
+        tooltip.style.display = 'block';
+        tooltip.style.left = Math.min(mx + 12, W - 160) + 'px';
+        tooltip.style.top  = (my - 30) + 'px';
+        tooltip.textContent = `${lo}× – ${hi}×   ${hit.count.toLocaleString()} ${tl.histTooltipRounds || 'rounds'}  (${pct}%)`;
+        // redraw with hover bar
+        ctx.clearRect(0, 0, W, H);
+        for (let t = 0; t <= yTicks; t++) {
+          const y = pad.top + chartH - (t / yTicks) * chartH;
+          ctx.strokeStyle = gridColor; ctx.lineWidth = 1;
+          ctx.beginPath(); ctx.moveTo(pad.left, y); ctx.lineTo(pad.left + chartW, y); ctx.stroke();
+        }
+        for (const r of rects) {
+          ctx.fillStyle = (r === hit) ? barHover : barColor;
+          ctx.beginPath();
+          ctx.roundRect(r.x + 1, r.y, r.w - 2, r.h, [2, 2, 0, 0]);
+          ctx.fill();
+        }
+        drawMarker(median,  markerColor, (tl.histMedian || 'Median') + ' ' + median.toFixed(2) + '×',  0);
+        drawMarker(avg,     avgColor,    (tl.histAvg    || 'Avg')    + ' ' + (avg   ||0).toFixed(2) + '×', 1);
+        drawMarker(cashOut, cashColor,   (tl.histTarget || 'Target') + ' ' + cashOut.toFixed(2) + '×', 2);
+      } else {
+        tooltip.style.display = 'none';
+      }
+    };
+    canvas.onmouseleave = () => { tooltip.style.display = 'none'; };
   }
 </script>
 

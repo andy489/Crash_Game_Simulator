@@ -50,8 +50,8 @@ public class SimulationController {
     @GetMapping("/simulate/stream")
     @ResponseBody
     public SseEmitter stream(@ModelAttribute SimulationRequest req) {
-        log.info("GET /simulate/stream — spins={} threads={} stake={} zeroInterval={}",
-                req.getSpins(), req.getThreadCount(), req.getStake(), req.getZeroSpinInterval());
+        log.info("GET /simulate/stream — rounds={} threads={} stake={} cashOut={}x instantCrashInterval={}",
+                req.getSpins(), req.getThreadCount(), req.getStake(), req.getCashOutMultiplier(), req.getInstantCrashInterval());
         return simulationService.run(req);
     }
 }
